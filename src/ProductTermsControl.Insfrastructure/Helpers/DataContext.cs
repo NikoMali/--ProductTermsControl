@@ -18,7 +18,7 @@ namespace ProductTermsControl.Insfrastructure.Helpers
             // connect to sql server database
             options.UseSqlServer(Configuration.GetConnectionString("WebApiDatabase"));
         }
-        //Main Migration and Invoke PM Code: Add-Migration <Name> -Context DataContext -Project ProductTermsControl.Insfrastructure
+        //Main Migration and Invoke PM Code: Add-Migration <Name > -Context DataContext -Project ProductTermsControl.Insfrastructure
         public DbSet<User> Users { get; set; }
         public DbSet<Company> Companys { get; set; }
         public DbSet<Magazine> Magazines { get; set; }
