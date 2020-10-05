@@ -55,7 +55,7 @@ namespace ProductTermsControl.WebAPI.Controllers
         {
             var model = _mapper.Map<Company>(CompanyModel);
             var Company = _CompanyService.Update(model);
-            return Ok(Company);
+            return Ok(new { status = Company });
         }
         /// <summary>
         /// Delete Company By Id
@@ -64,7 +64,7 @@ namespace ProductTermsControl.WebAPI.Controllers
         public IActionResult Delete(int Id)
         {
             var CompanyResult = _CompanyService.Delete(Id);
-            return Ok(CompanyResult);
+            return Ok(new { status = CompanyResult });
         }
         /// <summary>
         /// Company Create
@@ -76,7 +76,7 @@ namespace ProductTermsControl.WebAPI.Controllers
             model.CreateDate = DateTime.Now;
             model.UpdateDate = DateTime.Now;
             var Company = _CompanyService.Create(model);
-            return Ok(Company);
+            return Ok(new { status = Company });
         }
     }
 }

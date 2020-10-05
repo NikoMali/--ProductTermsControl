@@ -16,6 +16,7 @@ namespace ProductTermsControl.WebAPI
                 {
                     webBuilder.UseStartup<Startup>()
                         .UseUrls("http://localhost:4000");
+                    //ngrok http -host-header=localhost 4000
                 });
     }
 }

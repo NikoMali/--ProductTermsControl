@@ -48,14 +48,14 @@ namespace ProductTermsControl.WebAPI.Controllers
         {
             var model = _mapper.Map<Magazine>(magazineModel);
             var magazine = _magazineService.Update(model);
-            return Ok(magazine);
+            return Ok(new { status = magazine });
         }
 
         [HttpDelete("{Id}")]
         public IActionResult Delete(int Id)
         {
             var magazineResult = _magazineService.Delete(Id);
-            return Ok(magazineResult);
+            return Ok(new {status = magazineResult});
         }
         [HttpPost]
         public IActionResult Create([FromBody] MagazineModel magazineModel)
@@ -64,7 +64,7 @@ namespace ProductTermsControl.WebAPI.Controllers
             model.CreateDate = DateTime.Now;
             model.UpdateDate = DateTime.Now;
             var magazine = _magazineService.Create(model);
-            return Ok(magazine);
+            return Ok(new { status = magazine });
         }
 
         //

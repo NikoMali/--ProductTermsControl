@@ -67,17 +67,18 @@ namespace ProductTermsControl.WebAPI
             public void Configure(IApplicationBuilder app, IWebHostEnvironment env, DataContext dataContext)
             {
                 // migrate any database changes on startup (includes initial db creation)
+
+                // global cors policy
+                app.UseCors(builder => builder
+                        .WithOrigins("http://localhost:4200")
+                        .AllowAnyMethod()
+                        .AllowAnyHeader()
+                        .AllowCredentials()
+                        );
                 dataContext.Database.Migrate();
                 app.UseDeveloperExceptionPage();
                 app.UseStaticFiles();
                 app.UseRouting();
-
-                // global cors policy
-                app.UseCors(builder => builder
-                        .WithOrigins("http://localhost:4200/")
-                        .AllowAnyMethod()
-                        .AllowAnyHeader()
-                        .AllowCredentials());
 
                 app.UseAuthentication();
                     app.UseAuthorization();
