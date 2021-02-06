@@ -9,6 +9,8 @@ namespace ProductTermsControl.Domain.Entities
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Username { get; set; }
+        public string Email { get; set; }
+        public string Avatar { get; set; }
         public byte[] PasswordHash { get; set; }
         public byte[] PasswordSalt { get; set; }
         public DateTime CreateDate { get; set; }
@@ -18,9 +20,8 @@ namespace ProductTermsControl.Domain.Entities
 
 
         //referencee
-        public int MagazineBranchId { get; set; }
-        public MagazineBranch MagazineBranchs { get; set; }
 
+        public List<UserReference> UserReferences { get; set; }
         public List<ResponsiblePersonsForProduct> ResponsiblePersonsByProducts { get; set; }
     }
 }

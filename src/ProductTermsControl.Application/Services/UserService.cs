@@ -15,15 +15,21 @@ namespace ProductTermsControl.Application.Services
         User Create(User user, string password);
         void Update(User user, string password = null);
         void Delete(int id);
+
+        string UserReferenceCreate(UserReference userReference);
+        string UserReferenceUpdate(UserReference userReference);
+        string UserReferenceRemove(int userId);
     }
 
     public class UserService : IUserService
     {
         private readonly IUserRepository _userRepository;
+        private readonly IRepository<UserReference> _userReferenceRepository;
 
-        public UserService(IUserRepository userRepository)
+        public UserService(IUserRepository userRepository, IRepository<UserReference> userReferenceRepository)
         {
             _userRepository = userRepository;
+            _userReferenceRepository = userReferenceRepository;
         }
 
         public User Authenticate(string username, string password)
@@ -158,6 +164,25 @@ namespace ProductTermsControl.Application.Services
             }
 
             return true;
+        }
+
+        public string UserReferenceCreate(UserReference userReference)
+        {
+            _userReferenceRepository.Add(userReference);
+            _userReferenceRepository.SaveChanges();
+            return ResultStatus.SUCCESS;
+        }
+        public string UserReferenceUpdate(UserReference userReference)
+        {
+            _userReferenceRepository.Update(userReference);
+            _userReferenceRepository.SaveChanges();
+            return ResultStatus.SUCCESS;
+        }
+        public string UserReferenceRemove(int userId)
+        {
+            _userReferenceRepository.Remove(userId);
+            _userReferenceRepository.SaveChanges();
+            return ResultStatus.SUCCESS;
         }
 
         public void Dispose()

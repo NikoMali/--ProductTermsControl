@@ -14,7 +14,7 @@ namespace ProductTermsControl.Insfrastructure.StartUpExtensions
     {
         public static IServiceCollection AddCustomizedSwagger(this IServiceCollection services, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
+            if (env.IsDevelopment() || env.IsEnvironment("PreProduction"))
             {
                 services.AddSwaggerGen(c =>
                 {
@@ -57,8 +57,9 @@ namespace ProductTermsControl.Insfrastructure.StartUpExtensions
 
 
                     // Set the comments path for the Swagger JSON and UI.
-                    var xmlFile = $"ProductTermsControl.WebApi.xml";
-                    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                    //var xmlFile = $"ProductTermsControl.WebApi.xml";
+                    var xmlPath = $@"{env.ContentRootPath}/ProductTermSwagger.xml";
+                    //var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                     c.IncludeXmlComments(xmlPath);
                 });
             }

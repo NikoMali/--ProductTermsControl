@@ -16,7 +16,7 @@ namespace ProductTermsControl.Insfrastructure.Helpers
         protected override void OnConfiguring(DbContextOptionsBuilder options)
         {
             // connect to sql server database
-            options.UseSqlServer(Configuration.GetConnectionString("WebApiDatabase"));
+            options.UseMySQL(Configuration.GetConnectionString("WebApiDatabase"));
         }
         //Main Migration and Invoke PM Code: Add-Migration <Name > -Context DataContext -Project ProductTermsControl.Insfrastructure
         public DbSet<User> Users { get; set; }
@@ -27,6 +27,6 @@ namespace ProductTermsControl.Insfrastructure.Helpers
         public DbSet<ProductToBranch> ProductToBranches { get; set; }
         public DbSet<ResponsiblePersonsForProduct> ResponsiblePersonsForProducts { get; set; }
         public DbSet<ResponsiblePersonsGroup> ResponsiblePersonsGroups { get; set; }
-
+        public DbSet<UserReference> UserReferences { get; set; }
     }
 }

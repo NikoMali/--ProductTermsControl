@@ -20,6 +20,6 @@ namespace ProductTermsControl.Domain.Entities
         public Magazine Magazine { get; set; }
 
         public List<ProductToBranch> ProductToBranchs { get; set; }
-        public List<User> Users { get; set; }
+        public List<UserReference> UserReferences { get; set; }
     }
 }

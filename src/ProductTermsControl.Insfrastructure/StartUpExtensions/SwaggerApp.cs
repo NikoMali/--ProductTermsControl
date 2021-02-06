@@ -8,7 +8,7 @@ namespace ProductTermsControl.Insfrastructure.StartUpExtensions
     {
         public static IApplicationBuilder UseCustomizedSwagger(this IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
+            if (env.IsDevelopment() || env.IsEnvironment("PreProduction"))
             {
                 // Enable middleware to serve generated Swagger as a JSON endpoint.
                 app.UseSwagger();

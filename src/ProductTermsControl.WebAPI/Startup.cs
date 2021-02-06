@@ -15,6 +15,7 @@ using System;
 using System.Text;
 using System.Threading.Tasks;
 
+
 namespace ProductTermsControl.WebAPI
 {
     
@@ -33,10 +34,12 @@ namespace ProductTermsControl.WebAPI
             public void ConfigureServices(IServiceCollection services)
             {
                 // use sql server db in production and sqlite db in development
-                if (_env.IsProduction())
                     services.AddDbContext<DataContext>();
-                else
-                    services.AddDbContext<DataContext>();
+                
+            
+
+           
+                    
 
                 services.AddCors();
                 services.AddControllers();
