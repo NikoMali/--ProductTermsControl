@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using ProductTermsControl.Application.Services;
+using ProductTermsControl.Domain.Entities;
 using ProductTermsControl.Domain.Interfaces;
 using ProductTermsControl.Insfrastructure.Repository;
 
@@ -10,6 +11,8 @@ namespace ProductTermsControl.Insfrastructure.IntarfaceConnReposit
     {
         public static void RegisterServices(IServiceCollection services)
         {
+            //services.AddScoped<IRepository<UserReference>, Repository<UserReference>>();
+            services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IUserService, UserService>();
 

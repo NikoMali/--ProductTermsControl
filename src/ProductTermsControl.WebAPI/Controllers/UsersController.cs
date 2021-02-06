@@ -131,5 +131,29 @@ namespace WebApi.Controllers
             _userService.Delete(id);
             return Ok();
         }
+        [AllowAnonymous]
+        [HttpPost("UserReferenceCreate")]
+        public IActionResult UserReferenceCreate([FromBody] UserReferenceModel model)
+        {
+            var user = _mapper.Map<UserReference>(model);
+            var result = _userService.UserReferenceCreate(user);
+            return Ok(new { message = result });
+        }
+        [AllowAnonymous]
+        [HttpPut("UserReferenceUpdate")]
+        public IActionResult UserReferenceUpdate([FromBody] UserReferenceModel model)
+        {
+            var user = _mapper.Map<UserReference>(model);
+            var result = _userService.UserReferenceUpdate(user);
+            return Ok(new { message = result });
+        }
+        [AllowAnonymous]
+        [HttpDelete("UserReferenceRemove/{userId}")]
+        public IActionResult UserReferenceRemove(int userId)
+        {
+            
+            var result = _userService.UserReferenceRemove(userId);
+            return Ok(new { message = result });
+        }
     }
 }

@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>ProductTermsControl.WebAPI</name>
+    </assembly>
+    <members>
+        <member name="M:ProductTermsControl.WebAPI.Controllers.CompaniesController.GetAll">
+            <summary>
+            Company Full List
+            </summary>
+        </member>
+        <member name="M:ProductTermsControl.WebAPI.Controllers.CompaniesController.GetById(System.Int32)">
+            <summary>
+            Get Company By Id
+            </summary>
+        </member>
+        <member name="M:ProductTermsControl.WebAPI.Controllers.CompaniesController.Update(ProductTermsControl.WebAPI.Models.CompanyModel)">
+            <summary>
+            Company update By Body
+            </summary>
+        </member>
+        <member name="M:ProductTermsControl.WebAPI.Controllers.CompaniesController.Delete(System.Int32)">
+            <summary>
+            Delete Company By Id
+            </summary>
+        </member>
+        <member name="M:ProductTermsControl.WebAPI.Controllers.CompaniesController.Create(ProductTermsControl.WebAPI.Models.CompanyModel)">
+            <summary>
+            Company Create
+            </summary>
+        </member>
+    </members>
+</doc>

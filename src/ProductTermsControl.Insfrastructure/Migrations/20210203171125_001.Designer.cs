@@ -2,7 +2,6 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProductTermsControl.Insfrastructure.Helpers;
@@ -10,35 +9,33 @@ using ProductTermsControl.Insfrastructure.Helpers;
 namespace ProductTermsControl.Insfrastructure.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20200821095218_Initial")]
-    partial class Initial
+    [Migration("20210203171125_001")]
+    partial class _001
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "3.1.3")
-                .HasAnnotation("Relational:MaxIdentifierLength", 128)
-                .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             modelBuilder.Entity("ProductTermsControl.Domain.Entities.Company", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreateDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime");
 
                     b.Property<string>("IdentificationCode")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("UpdateDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime");
 
                     b.HasKey("Id");
 
@@ -49,20 +46,19 @@ namespace ProductTermsControl.Insfrastructure.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreateDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime");
 
                     b.Property<string>("IdentificationCode")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("UpdateDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime");
 
                     b.HasKey("Id");
 
@@ -73,26 +69,25 @@ namespace ProductTermsControl.Insfrastructure.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreateDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime");
 
                     b.Property<string>("IdentificationCode")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Location")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<int>("MagazineId")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("UpdateDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime");
 
                     b.HasKey("Id");
 
@@ -105,23 +100,22 @@ namespace ProductTermsControl.Insfrastructure.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
 
                     b.Property<int>("CompanyId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreateDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime");
 
                     b.Property<string>("IdentificationCode")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("UpdateDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime");
 
                     b.HasKey("Id");
 
@@ -134,8 +128,7 @@ namespace ProductTermsControl.Insfrastructure.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
 
                     b.Property<int>("DaysBeforeNotifiWarning")
                         .HasColumnType("int");
@@ -146,11 +139,17 @@ namespace ProductTermsControl.Insfrastructure.Migrations
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
 
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("RegisterDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime");
+
+                    b.Property<int>("ResponsiblePersonsGroupId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("TermDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime");
 
                     b.HasKey("Id");
 
@@ -158,24 +157,22 @@ namespace ProductTermsControl.Insfrastructure.Migrations
 
                     b.HasIndex("ProductId");
 
+                    b.HasIndex("ResponsiblePersonsGroupId");
+
                     b.ToTable("ProductToBranches");
                 });
 
-            modelBuilder.Entity("ProductTermsControl.Domain.Entities.ResponsiblePersonsByProduct", b =>
+            modelBuilder.Entity("ProductTermsControl.Domain.Entities.ResponsiblePersonsForProduct", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("RegisterDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime");
 
                     b.Property<int>("ResponsiblePersonsGroupId")
                         .HasColumnType("int");
-
-                    b.Property<DateTime>("TermDate")
-                        .HasColumnType("datetime2");
 
                     b.Property<int>("UserId")
                         .HasColumnType("int");
@@ -186,24 +183,23 @@ namespace ProductTermsControl.Insfrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("ResponsiblePersonsByProducts");
+                    b.ToTable("ResponsiblePersonsForProducts");
                 });
 
             modelBuilder.Entity("ProductTermsControl.Domain.Entities.ResponsiblePersonsGroup", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreateDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime");
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("UpdateDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime");
 
                     b.HasKey("Id");
 
@@ -214,38 +210,47 @@ namespace ProductTermsControl.Insfrastructure.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreateDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime");
 
                     b.Property<string>("FirstName")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("LastName")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
+
+                    b.Property<byte[]>("PasswordHash")
+                        .HasColumnType("varbinary(4000)");
+
+                    b.Property<byte[]>("PasswordSalt")
+                        .HasColumnType("varbinary(4000)");
+
+                    b.Property<DateTime>("UpdateDate")
+                        .HasColumnType("datetime");
+
+                    b.Property<string>("Username")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("ProductTermsControl.Domain.Entities.UserReference", b =>
+                {
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
 
                     b.Property<int>("MagazineBranchId")
                         .HasColumnType("int");
 
-                    b.Property<byte[]>("PasswordHash")
-                        .HasColumnType("varbinary(max)");
-
-                    b.Property<byte[]>("PasswordSalt")
-                        .HasColumnType("varbinary(max)");
-
-                    b.Property<DateTime>("UpdateDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Username")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
+                    b.HasKey("UserId");
 
                     b.HasIndex("MagazineBranchId");
 
-                    b.ToTable("Users");
+                    b.ToTable("UserReferences");
                 });
 
             modelBuilder.Entity("ProductTermsControl.Domain.Entities.MagazineBranch", b =>
@@ -279,9 +284,15 @@ namespace ProductTermsControl.Insfrastructure.Migrations
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("ProductTermsControl.Domain.Entities.ResponsiblePersonsGroup", "ResponsiblePersonsGroup")
+                        .WithMany("ProductToBranchs")
+                        .HasForeignKey("ResponsiblePersonsGroupId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
-            modelBuilder.Entity("ProductTermsControl.Domain.Entities.ResponsiblePersonsByProduct", b =>
+            modelBuilder.Entity("ProductTermsControl.Domain.Entities.ResponsiblePersonsForProduct", b =>
                 {
                     b.HasOne("ProductTermsControl.Domain.Entities.ResponsiblePersonsGroup", "ResponsiblePersonsGroup")
                         .WithMany()
@@ -296,11 +307,17 @@ namespace ProductTermsControl.Insfrastructure.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("ProductTermsControl.Domain.Entities.User", b =>
+            modelBuilder.Entity("ProductTermsControl.Domain.Entities.UserReference", b =>
                 {
                     b.HasOne("ProductTermsControl.Domain.Entities.MagazineBranch", "MagazineBranchs")
-                        .WithMany("Users")
+                        .WithMany("UserReferences")
                         .HasForeignKey("MagazineBranchId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ProductTermsControl.Domain.Entities.User", "User")
+                        .WithMany("UserReferences")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
