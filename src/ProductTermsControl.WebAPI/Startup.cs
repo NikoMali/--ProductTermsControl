@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using ProductTermsControl.Application.IntarfaceConnReposit;
 using ProductTermsControl.Insfrastructure.Helpers;
 using ProductTermsControl.Insfrastructure.IntarfaceConnReposit;
 using ProductTermsControl.Insfrastructure.StartUpExtensions;
@@ -99,6 +100,7 @@ namespace ProductTermsControl.WebAPI
         {
             // Adding dependencies from another layers (isolated from Presentation)
             IntarfaceConnReposit.RegisterServices(services);
+            IntfConRepoForBusinessLogic.RegisterServices(services);
         }
     }
     }

@@ -33,7 +33,6 @@
   
   
   <ItemGroup>
-    <ProjectReference Include="..\ProductTermsControl.Application\ProductTermsControl.Application.csproj" />
     <ProjectReference Include="..\ProductTermsControl.Domain\ProductTermsControl.Domain.csproj" />
   </ItemGroup>
 

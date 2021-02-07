@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ProductTermsControl.Domain.Interfaces;
+using ProductTermsControl.Insfrastructure.Filter;
 using ProductTermsControl.Insfrastructure.Helpers;
 using System;
 using System.Collections.Generic;
@@ -37,6 +38,20 @@ namespace ProductTermsControl.Insfrastructure.Repository
         {
             return DbSet;
         }
+        /*public virtual GetAllWithPaging<TEntity> GetAllFilter(int PageNumber, int PageSize)
+        {
+            var validFilter = new PaginationFilter(PageNumber, PageSize);
+            var pagedData = DbSet
+                .Skip((validFilter.PageNumber - 1) * validFilter.PageSize)
+                .Take(validFilter.PageSize)
+                .ToList();
+
+
+            var totalRecords = DbSet.Count();
+            var result = new GetAllWithPaging<TEntity>(validFilter, pagedData, totalRecords);
+            return result;
+
+        }*/
 
         public virtual IQueryable<TEntity> GetAll(ISpecification<TEntity> spec)
         {
@@ -79,6 +94,7 @@ namespace ProductTermsControl.Insfrastructure.Repository
         {
             return DbSet;
         }
+       
 
         IQueryable<TEntity> IRepository<TEntity>.GetAll(ISpecification<TEntity> spec)
         {

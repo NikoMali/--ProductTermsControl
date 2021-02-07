@@ -4,7 +4,7 @@
         <name>ProductTermsControl.WebAPI</name>
     </assembly>
     <members>
-        <member name="M:ProductTermsControl.WebAPI.Controllers.CompaniesController.GetAll">
+        <member name="M:ProductTermsControl.WebAPI.Controllers.CompaniesController.GetAll(ProductTermsControl.Insfrastructure.Filter.PaginationFilter)">
             <summary>
             Company Full List
             </summary>

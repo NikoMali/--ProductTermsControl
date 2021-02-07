@@ -1,7 +1,8 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using ProductTermsControl.Application.Services;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
 using ProductTermsControl.Domain.Entities;
 using ProductTermsControl.Domain.Interfaces;
+using ProductTermsControl.Insfrastructure.Paging.Services;
 using ProductTermsControl.Insfrastructure.Repository;
 
 
@@ -14,31 +15,41 @@ namespace ProductTermsControl.Insfrastructure.IntarfaceConnReposit
             //services.AddScoped<IRepository<UserReference>, Repository<UserReference>>();
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
             services.AddScoped<IUserRepository, UserRepository>();
-            services.AddScoped<IUserService, UserService>();
+            
 
             services.AddScoped<IMagazineRepository, MagazineRepository>();
-            services.AddScoped<IMagazineService, MagazineService>();
+            
 
             services.AddScoped<IMagazineBranchRepository, MagazineBranchRepository>();
-            services.AddScoped<IMagazineBranchService, MagazineBranchService>();
+            
 
             services.AddScoped<ICompanyRepository, CompanyRepository>();
-            services.AddScoped<ICompanyService, CompanyService>();
+            
 
             services.AddScoped<IProductRepository, ProductRepository>();
-            services.AddScoped<IProductService, ProductService>();
+            
 
             services.AddScoped<IResponsiblePersonsGroupRepository, ResponsiblePersonsGroupRepository>();
-            services.AddScoped<IResponsiblePersonsGroupService, ResponsiblePersonsGroupService>();
+            
 
             services.AddScoped<IResponsiblePersonsForProductRepository, ResponsiblePersonsForProductRepository>();
-            services.AddScoped<IResponsiblePersonsForProductService, ResponsiblePersonsForProductService>();
+            
 
             services.AddScoped<IProductToBranchRepository, ProductToBranchRepository>();
-            services.AddScoped<IProductToBranchService, ProductToBranchService>();
+           
 
             services.AddScoped<ICommonRepository, CommonRepository>();
 
+            //for paging
+            services.AddHttpContextAccessor();
+            services.AddSingleton<IUriService>(o =>
+            {
+                var accessor = o.GetRequiredService<IHttpContextAccessor>();
+                var request = accessor.HttpContext.Request;
+                var uri = string.Concat(request.Scheme, "://", request.Host.ToUriComponent());
+                return new UriService(uri);
+            });
+            ////
         }
     }
 }
