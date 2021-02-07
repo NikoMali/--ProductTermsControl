@@ -1,10 +1,11 @@
 ﻿using ProductTermsControl.Application.Helpers;
 using ProductTermsControl.Domain.Entities;
 using ProductTermsControl.Domain.Interfaces;
+using ProductTermsControl.Insfrastructure.Filter;
+using ProductTermsControl.Insfrastructure.Helpers;
 using System;
 using System.Collections.Generic;
-using System.Text;
-
+using System.Linq;
 namespace ProductTermsControl.Application.Services
 {
     public interface ICompanyService : IDisposable
@@ -14,6 +15,7 @@ namespace ProductTermsControl.Application.Services
         string Delete(int Id);
         Company GetById(int Id);
         string Create(Company company);
+        GetAllWithPaging<Company> GetAllForPaging(int PageNumber, int PageSize);
     }
 
     public class CompanyService : ICompanyService
@@ -69,7 +71,20 @@ namespace ProductTermsControl.Application.Services
             _companyRepository.SaveChanges();
             return ResultStatus.SUCCESS;
         }
+        public GetAllWithPaging<Company> GetAllForPaging(int PageNumber, int PageSize)
+        {
+            
+            var validFilter = new PaginationFilter(PageNumber, PageSize);
+            var pagedData = _companyRepository.GetAll() 
+                .Skip((validFilter.PageNumber - 1) * validFilter.PageSize)
+                .Take(validFilter.PageSize)
+                .ToList();
 
+            
+            var totalRecords = _companyRepository.GetAll().Count();
+            var result = new GetAllWithPaging<Company>(validFilter, pagedData, totalRecords);
+            return result;
+        }
         public void Dispose()
         {
             GC.SuppressFinalize(this);

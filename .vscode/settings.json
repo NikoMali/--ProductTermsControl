@@ -1,0 +1,18 @@
+
+
+{
+    "deploy": {
+        
+
+        "targets": [
+            {
+                "type": "sftp",
+                "name": "My SFTP folder",
+                "description": "A SFTP folder",
+                "dir": "/src/ProductTermsControl.WebAPI/bin/Debug/netcoreapp3.1/publish",
+                "host": "161.97.167.22", "port": 22,
+                "user": "root", "password": "NeP5dcWHJDvf4",
+            }
+        ]
+    }
+}

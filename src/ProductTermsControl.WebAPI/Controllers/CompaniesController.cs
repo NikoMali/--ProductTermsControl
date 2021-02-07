@@ -8,6 +8,10 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ProductTermsControl.Application.Services;
 using ProductTermsControl.Domain.Entities;
+using ProductTermsControl.Insfrastructure.Filter;
+using ProductTermsControl.Insfrastructure.Paging.Helpers;
+using ProductTermsControl.Insfrastructure.Paging.Services;
+using ProductTermsControl.Insfrastructure.Wrappers;
 using ProductTermsControl.WebAPI.Models;
 
 namespace ProductTermsControl.WebAPI.Controllers
@@ -19,23 +23,31 @@ namespace ProductTermsControl.WebAPI.Controllers
     {
         private ICompanyService _CompanyService;
         private IMapper _mapper;
+        private readonly IUriService _uriService;
 
         public CompaniesController(
             ICompanyService CompanyService,
-            IMapper mapper)
+            IMapper mapper,
+            IUriService uriService)
         {
             _CompanyService = CompanyService;
             _mapper = mapper;
+            _uriService = uriService;
         }
         /// <summary>
         /// Company Full List
         /// </summary>
         [HttpGet]
-        public IActionResult GetAll()
+        public IActionResult GetAll([FromQuery] PaginationFilter filter)
         {
-            var Companys = _CompanyService.GetAll();
-            var model = _mapper.Map<IList<CompanyModel>>(Companys);
-            return Ok(model);
+            
+            var route = Request.Path.Value;
+            var pageData = _CompanyService.GetAllForPaging(filter.PageNumber, filter.PageSize);
+            //var pageData = PaginationData.GetAllForPaging<Company>(filter.PageNumber, filter.PageSize, _CompanyService.GetAll().ToList());
+            var model = _mapper.Map<List<CompanyModel>>(pageData.entities);
+            var pagedReponse = PaginationHelper.CreatePagedReponse<CompanyModel>(model, pageData.PaginationFilter, pageData.totalRecords, _uriService, route);
+            return Ok(pagedReponse);
+
         }
         /// <summary>
         /// Get Company By Id
