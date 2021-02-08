@@ -15,5 +15,10 @@ namespace ProductTermsControl.WebAPI.Models.Users
 
         [Required]
         public string Password { get; set; }
+        public string Email { get; set; }
+        public string Avatar { get; set; }
+        public string MobileNumber { get; set; }
+        public int MagazineBranchId { get; set; }
+        public int PositionId { get; set; }
     }
 }

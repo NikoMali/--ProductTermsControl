@@ -38,11 +38,11 @@ namespace ProductTermsControl.WebAPI.Controllers
         /// Company Full List
         /// </summary>
         [HttpGet]
-        public IActionResult GetAll([FromQuery] PaginationFilter filter)
+        public async Task<IActionResult> GetAll([FromQuery] PaginationFilter filter)
         {
             
             var route = Request.Path.Value;
-            var pageData = _CompanyService.GetAllForPaging(filter.PageNumber, filter.PageSize);
+            var pageData =await _CompanyService.GetAllForPaging(filter.PageNumber, filter.PageSize);
             //var pageData = PaginationData.GetAllForPaging<Company>(filter.PageNumber, filter.PageSize, _CompanyService.GetAll().ToList());
             var model = _mapper.Map<List<CompanyModel>>(pageData.entities);
             var pagedReponse = PaginationHelper.CreatePagedReponse<CompanyModel>(model, pageData.PaginationFilter, pageData.totalRecords, _uriService, route);
@@ -53,9 +53,9 @@ namespace ProductTermsControl.WebAPI.Controllers
         /// Get Company By Id
         /// </summary>
         [HttpGet("{Id}")]
-        public IActionResult GetById(int Id)
+        public async Task<IActionResult> GetById(int Id)
         {
-            var Company = _CompanyService.GetById(Id);
+            var Company = await _CompanyService.GetById(Id);
             var model = _mapper.Map<CompanyModel>(Company);
             return Ok(model);
         }
@@ -63,32 +63,32 @@ namespace ProductTermsControl.WebAPI.Controllers
         /// Company update By Body
         /// </summary>
         [HttpPut]
-        public IActionResult Update([FromBody] CompanyModel CompanyModel)
+        public async Task<IActionResult> Update([FromBody] CompanyModel CompanyModel)
         {
             var model = _mapper.Map<Company>(CompanyModel);
-            var Company = _CompanyService.Update(model);
-            return Ok(new { status = Company });
+            var Company = await _CompanyService.Update(model);
+            return Ok(_mapper.Map<CompanyModel>(Company));
         }
         /// <summary>
         /// Delete Company By Id
         /// </summary>
         [HttpDelete("{Id}")]
-        public IActionResult Delete(int Id)
+        public async Task<IActionResult> Delete(int Id)
         {
-            var CompanyResult = _CompanyService.Delete(Id);
-            return Ok(new { status = CompanyResult });
+            var CompanyResult =await _CompanyService.Delete(Id);
+            return Ok(CompanyResult);
         }
         /// <summary>
         /// Company Create
         /// </summary>
         [HttpPost]
-        public IActionResult Create([FromBody] CompanyModel CompanyModel)
+        public async Task<IActionResult> Create([FromBody] CompanyModel CompanyModel)
         {
             var model = _mapper.Map<Company>(CompanyModel);
             model.CreateDate = DateTime.Now;
             model.UpdateDate = DateTime.Now;
-            var Company = _CompanyService.Create(model);
-            return Ok(new { status = Company });
+            var Company =await _CompanyService.Create(model);
+            return Ok(_mapper.Map<CompanyModel>(Company));
         }
     }
 }

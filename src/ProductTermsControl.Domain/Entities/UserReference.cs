@@ -16,6 +16,9 @@ namespace ProductTermsControl.Domain.Entities
         public int MagazineBranchId { get; set; }
         public MagazineBranch MagazineBranchs { get; set; }
 
+        public int PositionId { get; set; }
+        public Position Positions { get; set; }
+
 
     }
 }

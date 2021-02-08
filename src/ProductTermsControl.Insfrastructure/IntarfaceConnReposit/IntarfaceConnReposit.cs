@@ -14,30 +14,11 @@ namespace ProductTermsControl.Insfrastructure.IntarfaceConnReposit
         {
             //services.AddScoped<IRepository<UserReference>, Repository<UserReference>>();
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-            services.AddScoped<IUserRepository, UserRepository>();
-            
-
             services.AddScoped<IMagazineRepository, MagazineRepository>();
-            
-
-            services.AddScoped<IMagazineBranchRepository, MagazineBranchRepository>();
-            
-
-            services.AddScoped<ICompanyRepository, CompanyRepository>();
-            
-
             services.AddScoped<IProductRepository, ProductRepository>();
-            
-
             services.AddScoped<IResponsiblePersonsGroupRepository, ResponsiblePersonsGroupRepository>();
-            
-
             services.AddScoped<IResponsiblePersonsForProductRepository, ResponsiblePersonsForProductRepository>();
-            
-
             services.AddScoped<IProductToBranchRepository, ProductToBranchRepository>();
-           
-
             services.AddScoped<ICommonRepository, CommonRepository>();
 
             //for paging

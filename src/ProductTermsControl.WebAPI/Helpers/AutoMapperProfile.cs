@@ -13,7 +13,9 @@ namespace ProductTermsControl.WebAPI.Helpers
         {
             CreateMap<User, UserModel>();
             CreateMap<RegisterModel, User>();
+            CreateMap<User, RegisterModel>();
             CreateMap<UpdateModel, User>();
+            CreateMap<User, UpdateModel>();
 
             CreateMap<Magazine, MagazineModel>();
             CreateMap<MagazineModel, Magazine>();
@@ -35,6 +37,14 @@ namespace ProductTermsControl.WebAPI.Helpers
 
             CreateMap<UserReference, UserReferenceModel>();
             CreateMap<UserReferenceModel, UserReference>();
+
+            CreateMap<UserModel, UserReference>();
+            CreateMap<UserReference, UserModel>();
+            CreateMap<RegisterModel, UserReference>();
+            CreateMap<UserReference, RegisterModel>();
+            CreateMap<UpdateModel, UserReference>();
+            CreateMap<UserReference, UpdateModel>();
+
         }
     }
 }

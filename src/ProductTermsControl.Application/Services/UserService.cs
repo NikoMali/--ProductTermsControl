@@ -1,43 +1,51 @@
-﻿using ProductTermsControl.Application.Helpers;
+﻿using Microsoft.EntityFrameworkCore;
+using ProductTermsControl.Application.Helpers;
 using ProductTermsControl.Domain.Entities;
 using ProductTermsControl.Domain.Interfaces;
+using ProductTermsControl.Insfrastructure.Filter;
+using ProductTermsControl.Insfrastructure.Helpers;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
+using AppException = ProductTermsControl.Insfrastructure.Helpers.AppException;
 
 namespace ProductTermsControl.Application.Services
 {
-    public interface IUserService : IDisposable
+    public interface IUserService
     {
-        User Authenticate(string username, string password);
-        IEnumerable<User> GetAll();
-        User GetById(int id);
-        User Create(User user, string password);
-        void Update(User user, string password = null);
-        void Delete(int id);
+        Task<User> Authenticate(string username, string password);
+        Task<IEnumerable<User>> GetAll();
+        Task<User> GetById(int id);
+        Task<User> Create(User user, string password);
+        Task<User> Update(User user, string password = null);
+        Task<string> Delete(int id);
 
-        string UserReferenceCreate(UserReference userReference);
-        string UserReferenceUpdate(UserReference userReference);
-        string UserReferenceRemove(int userId);
+        Task<GetAllWithPaging<User>> GetAllForPaging(int PageNumber, int PageSize);
+
+        Task<UserReference> UserReferenceCreate(UserReference userReference);
+        Task<UserReference> UserReferenceUpdate(UserReference userReference);
+        Task<string> UserReferenceRemove(int userId);
+        Task<UserReference> UserReferenceGetById(int userId);
     }
 
     public class UserService : IUserService
     {
-        private readonly IUserRepository _userRepository;
-        private readonly IRepository<UserReference> _userReferenceRepository;
+        private readonly DataContext _context;
+       
 
-        public UserService(IUserRepository userRepository, IRepository<UserReference> userReferenceRepository)
+        public UserService(DataContext context)
         {
-            _userRepository = userRepository;
-            _userReferenceRepository = userReferenceRepository;
+            _context = context;
         }
 
-        public User Authenticate(string username, string password)
+        public async Task<User> Authenticate(string username, string password)
         {
             if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
                 return null;
 
-            var user = _userRepository.SingleOrDefault(username);
+            var user = await _context.Users.SingleOrDefaultAsync(x => x.Username == username);
 
             // check if username exists
             if (user == null)
@@ -51,23 +59,23 @@ namespace ProductTermsControl.Application.Services
             return user;
         }
 
-        public IEnumerable<User> GetAll()
+        public async Task<IEnumerable<User>> GetAll()
         {
-            return _userRepository.GetAll();
+            return await _context.Users.ToListAsync();
         }
 
-        public User GetById(int id)
+        public async Task<User> GetById(int id)
         {
-            return _userRepository.GetById(id);
+            return await _context.Users.FindAsync(id);
         }
 
-        public User Create(User user, string password)
+        public async Task<User> Create(User user, string password)
         {
             // validation
             if (string.IsNullOrWhiteSpace(password))
                 throw new AppException("Password is required");
 
-            if (_userRepository.Any(user.Username))
+            if (await _context.Users.AnyAsync(u=>u.Username == user.Username))
                 throw new AppException("Username \"" + user.Username + "\" is already taken");
 
             byte[] passwordHash, passwordSalt;
@@ -76,16 +84,16 @@ namespace ProductTermsControl.Application.Services
             user.PasswordHash = passwordHash;
             user.PasswordSalt = passwordSalt;
 
-            _userRepository.Add(user);
-            _userRepository.SaveChanges();
+            await _context.Users.AddAsync(user);
+            await _context.SaveChangesAsync();
             
 
             return user;
         }
 
-        public void Update(User userParam, string password = null)
+        public async Task<User> Update(User userParam, string password = null)
         {
-            var user = _userRepository.GetById(userParam.Id);
+            var user =await _context.Users.FindAsync(userParam.Id);
 
             if (user == null)
                 throw new AppException("User not found");
@@ -94,7 +102,7 @@ namespace ProductTermsControl.Application.Services
             if (!string.IsNullOrWhiteSpace(userParam.Username) && userParam.Username != user.Username)
             {
                 // throw error if the new username is already taken
-                if (_userRepository.Any(userParam.Username))
+                if (await _context.Users.AnyAsync(u=>u.Username == userParam.Username))
                     throw new AppException("Username " + userParam.Username + " is already taken");
 
                 user.Username = userParam.Username;
@@ -117,20 +125,23 @@ namespace ProductTermsControl.Application.Services
                 user.PasswordSalt = passwordSalt;
             }
 
-            _userRepository.Update(user);
-            _userRepository.SaveChanges();
-            
+            _context.Users.Update(user);
+            await _context.SaveChangesAsync();
+            return user;
+
+
         }
 
-        public void Delete(int id)
+        public async Task<string> Delete(int id)
         {
-            var user = _userRepository.GetById(id);
+            var user =await _context.Users.FindAsync(id);
             if (user != null)
             {
-                _userRepository.Remove(user.Id);
-                _userRepository.SaveChanges();
-                
+                _context.Users.Remove(user);
+                await _context.SaveChangesAsync();
+                return ResultStatus.SUCCESS;
             }
+            return ResultStatus.FAILED;
         }
 
         // private helper methods
@@ -166,28 +177,43 @@ namespace ProductTermsControl.Application.Services
             return true;
         }
 
-        public string UserReferenceCreate(UserReference userReference)
+        public async Task<UserReference> UserReferenceCreate(UserReference userReference)
         {
-            _userReferenceRepository.Add(userReference);
-            _userReferenceRepository.SaveChanges();
-            return ResultStatus.SUCCESS;
+            await _context.UserReferences.AddAsync(userReference);
+            await _context.SaveChangesAsync();
+            return userReference;
         }
-        public string UserReferenceUpdate(UserReference userReference)
+        public async Task<UserReference> UserReferenceUpdate(UserReference userReference)
         {
-            _userReferenceRepository.Update(userReference);
-            _userReferenceRepository.SaveChanges();
-            return ResultStatus.SUCCESS;
+            _context.UserReferences.Update(userReference);
+            await _context.SaveChangesAsync();
+            return userReference;
         }
-        public string UserReferenceRemove(int userId)
+        public async Task<string> UserReferenceRemove(int userId)
         {
-            _userReferenceRepository.Remove(userId);
-            _userReferenceRepository.SaveChanges();
+            _context.UserReferences.Remove(await _context.UserReferences.FindAsync(userId));
+            await _context.SaveChangesAsync();
             return ResultStatus.SUCCESS;
         }
 
-        public void Dispose()
+        public async Task<UserReference> UserReferenceGetById(int userId)
         {
-            GC.SuppressFinalize(this);
+            return await _context.UserReferences.FindAsync(userId);
+        }
+
+        public async Task<GetAllWithPaging<User>> GetAllForPaging(int PageNumber, int PageSize)
+        {
+
+            var validFilter = new PaginationFilter(PageNumber, PageSize);
+            var totalRecords = _context.Users.CountAsync();
+            var pagedData = await _context.Users
+                .Skip((validFilter.PageNumber - 1) * validFilter.PageSize)
+                .Take(validFilter.PageSize)
+                .ToListAsync();
+
+
+            var result = new GetAllWithPaging<User>(validFilter, pagedData, await totalRecords);
+            return result;
         }
     }
 }

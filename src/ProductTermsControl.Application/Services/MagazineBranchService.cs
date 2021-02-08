@@ -1,61 +1,68 @@
-﻿using ProductTermsControl.Application.Helpers;
+﻿using Microsoft.EntityFrameworkCore;
+using ProductTermsControl.Application.Helpers;
 using ProductTermsControl.Domain.Entities;
 using ProductTermsControl.Domain.Interfaces;
+using ProductTermsControl.Insfrastructure.Filter;
+using ProductTermsControl.Insfrastructure.Helpers;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
+using AppException = ProductTermsControl.Insfrastructure.Helpers.AppException;
 
 namespace ProductTermsControl.Application.Services
 {
-    public interface IMagazineBranchService : IDisposable
+    public interface IMagazineBranchService
     {
-        IEnumerable<MagazineBranch> GetAll();
-        string Update(MagazineBranch magazineBranch);
-        string Delete(int Id);
-        MagazineBranch GetById(int Id);
-        string Create(MagazineBranch magazineBranch);
-        IEnumerable<MagazineBranch> GetAllByMagazineId(int magazineId);
+        Task<IEnumerable<MagazineBranch>> GetAll();
+        Task<MagazineBranch> Update(MagazineBranch magazineBranch);
+        Task<string> Delete(int Id);
+        Task<MagazineBranch> GetById(int Id);
+        Task<MagazineBranch> Create(MagazineBranch magazineBranch);
+        Task<IEnumerable<MagazineBranch>> GetAllByMagazineId(int magazineId);
+        Task<GetAllWithPaging<MagazineBranch>> GetAllForPaging(int PageNumber, int PageSize);
     }
 
     public class MagazineBranchService : IMagazineBranchService
     {
-        private readonly IMagazineBranchRepository _magazineBranchRepository;
+        private readonly DataContext _context;
 
-        public MagazineBranchService(IMagazineBranchRepository magazineBranchRepository)
+        public MagazineBranchService(DataContext context)
         {
-            _magazineBranchRepository = magazineBranchRepository;
+            _context = context;
         }
-        public IEnumerable<MagazineBranch> GetAll()
+        public async Task<IEnumerable<MagazineBranch>> GetAll()
         {
-            return _magazineBranchRepository.GetAll();
+            return await _context.MagazineBranches.ToListAsync();
         }
 
-        public string Update(MagazineBranch magazineBranch)
+        public async Task<MagazineBranch> Update(MagazineBranch magazineBranch)
         {
             try
             {
-                _magazineBranchRepository.Update(magazineBranch);
-                _magazineBranchRepository.SaveChanges();
-                return ResultStatus.SUCCESS;
+                _context.MagazineBranches.Update(magazineBranch);
+                await _context.SaveChangesAsync();
+                return magazineBranch;
             }
             catch (Exception)
             {
-                return ResultStatus.FAILED;
+                throw new AppException(ResultStatus.FAILED);
             }
            
         }
 
-        public MagazineBranch GetById(int Id) 
+        public async Task<MagazineBranch> GetById(int Id) 
         {
-            return _magazineBranchRepository.GetById(Id);
+            return await _context.MagazineBranches.FindAsync(Id);
         }
 
-        public string Delete(int Id)
+        public async Task<string> Delete(int Id)
         {
             try
             {
-                _magazineBranchRepository.Remove(Id);
-                _magazineBranchRepository.SaveChanges();
+                _context.MagazineBranches.Remove(await _context.MagazineBranches.FindAsync(Id));
+                await _context.SaveChangesAsync();
                 return ResultStatus.SUCCESS;
             }
             catch (Exception)
@@ -64,21 +71,32 @@ namespace ProductTermsControl.Application.Services
             }
         }
 
-        public string Create(MagazineBranch MagazineBranch)
+        public async Task<MagazineBranch> Create(MagazineBranch MagazineBranch)
         {
-            _magazineBranchRepository.Add(MagazineBranch);
-            _magazineBranchRepository.SaveChanges();
-            return ResultStatus.SUCCESS;
+            await _context.MagazineBranches.AddAsync(MagazineBranch);
+            await _context.SaveChangesAsync();
+            return MagazineBranch;
         }
 
-        public IEnumerable<MagazineBranch> GetAllByMagazineId(int magazineId)
+        public async Task<IEnumerable<MagazineBranch>> GetAllByMagazineId(int magazineId)
         {
-            return _magazineBranchRepository.GetAllByMagazineId(magazineId);
+            return await _context.MagazineBranches.Where(m => m.MagazineId == magazineId).ToListAsync();
         }
 
-        public void Dispose()
+        public async Task<GetAllWithPaging<MagazineBranch>> GetAllForPaging(int PageNumber, int PageSize)
         {
-            GC.SuppressFinalize(this);
+
+            var validFilter = new PaginationFilter(PageNumber, PageSize);
+            var totalRecords = _context.MagazineBranches.CountAsync();
+            var pagedData = await _context.MagazineBranches
+                .Skip((validFilter.PageNumber - 1) * validFilter.PageSize)
+                .Take(validFilter.PageSize)
+                .ToListAsync();
+
+
+            var result = new GetAllWithPaging<MagazineBranch>(validFilter, pagedData, await totalRecords);
+            return result;
         }
+
     }
 }

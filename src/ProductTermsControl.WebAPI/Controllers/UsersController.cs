@@ -13,6 +13,10 @@ using Microsoft.AspNetCore.Authorization;
 using ProductTermsControl.Domain.Entities;
 using ProductTermsControl.WebAPI.Models.Users;
 using ProductTermsControl.Application.Services;
+using System.Threading.Tasks;
+using ProductTermsControl.Insfrastructure.Filter;
+using ProductTermsControl.Insfrastructure.Paging.Helpers;
+using ProductTermsControl.Insfrastructure.Paging.Services;
 
 namespace WebApi.Controllers
 {
@@ -24,22 +28,26 @@ namespace WebApi.Controllers
         private IUserService _userService;
         private IMapper _mapper;
         private readonly AppSettings _appSettings;
+        private readonly IUriService _uriService;
 
         public UsersController(
             IUserService userService,
             IMapper mapper,
-            IOptions<AppSettings> appSettings)
+            IOptions<AppSettings> appSettings,
+            IUriService uriService
+            )
         {
             _userService = userService;
             _mapper = mapper;
             _appSettings = appSettings.Value;
+            _uriService = uriService;
         }
 
         [AllowAnonymous]
         [HttpPost("authenticate")]
-        public IActionResult Authenticate([FromBody]AuthenticateModel model)
+        public async Task<IActionResult> Authenticate([FromBody]AuthenticateModel model)
         {
-            var user = _userService.Authenticate(model.Username, model.Password);
+            var user =await _userService.Authenticate(model.Username, model.Password);
 
             if (user == null)
                 return BadRequest(new { message = "Username or password is incorrect" });
@@ -71,7 +79,7 @@ namespace WebApi.Controllers
 
         [AllowAnonymous]
         [HttpPost("register")]
-        public IActionResult Register([FromBody]RegisterModel model)
+        public async Task<IActionResult> Register([FromBody]RegisterModel model)
         {
             // map model to entity
             var user = _mapper.Map<User>(model);
@@ -79,8 +87,8 @@ namespace WebApi.Controllers
             try
             {
                 // create user
-                _userService.Create(user, model.Password);
-                return Ok();
+                var createUser = await _userService.Create(user, model.Password);
+                return Ok(_mapper.Map<RegisterModel>(createUser));
             }
             catch (AppException ex)
             {
@@ -90,23 +98,28 @@ namespace WebApi.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetAll()
+        public async Task<IActionResult> GetAll([FromQuery] PaginationFilter filter)
         {
-            var users = _userService.GetAll();
+            /*var users =await _userService.GetAll();
             var model = _mapper.Map<IList<UserModel>>(users);
-            return Ok(model);
+            return Ok(model);*/
+            var route = Request.Path.Value;
+            var pageData = await _userService.GetAllForPaging(filter.PageNumber, filter.PageSize);
+            var model = _mapper.Map<List<UserModel>>(pageData.entities);
+            var pagedReponse = PaginationHelper.CreatePagedReponse<UserModel>(model, pageData.PaginationFilter, pageData.totalRecords, _uriService, route);
+            return Ok(pagedReponse);
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetById(int id)
+        public async Task<IActionResult> GetById(int id)
         {
-            var user = _userService.GetById(id);
+            var user =await _userService.GetById(id);
             var model = _mapper.Map<UserModel>(user);
             return Ok(model);
         }
 
         [HttpPut("{id}")]
-        public IActionResult Update(int id, [FromBody]UpdateModel model)
+        public async Task<IActionResult> Update(int id, [FromBody]UpdateModel model)
         {
             // map model to entity and set id
             var user = _mapper.Map<User>(model);
@@ -115,8 +128,8 @@ namespace WebApi.Controllers
             try
             {
                 // update user 
-                _userService.Update(user, model.Password);
-                return Ok();
+                var updateUser = await _userService.Update(user, model.Password);
+                return Ok(_mapper.Map<UpdateModel>(updateUser));
             }
             catch (AppException ex)
             {
@@ -126,34 +139,43 @@ namespace WebApi.Controllers
         }
 
         [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            _userService.Delete(id);
-            return Ok();
+            var deleteStatus = await _userService.Delete(id);
+            return Ok(new { status = deleteStatus });
         }
         [AllowAnonymous]
         [HttpPost("UserReferenceCreate")]
-        public IActionResult UserReferenceCreate([FromBody] UserReferenceModel model)
+        public async Task<IActionResult> UserReferenceCreate([FromBody] UserReferenceModel model)
         {
             var user = _mapper.Map<UserReference>(model);
-            var result = _userService.UserReferenceCreate(user);
-            return Ok(new { message = result });
+            var result =await _userService.UserReferenceCreate(user);
+            return Ok(result);
         }
         [AllowAnonymous]
         [HttpPut("UserReferenceUpdate")]
-        public IActionResult UserReferenceUpdate([FromBody] UserReferenceModel model)
+        public async Task<IActionResult> UserReferenceUpdate([FromBody] UserReferenceModel model)
         {
             var user = _mapper.Map<UserReference>(model);
-            var result = _userService.UserReferenceUpdate(user);
-            return Ok(new { message = result });
+            var result = await _userService.UserReferenceUpdate(user);
+            return Ok(result);
         }
         [AllowAnonymous]
+        [HttpGet("UserReference/{userId}")]
+        public async Task<IActionResult> UserReferenceGetById(int userId)
+        {
+            var result = await _userService.UserReferenceGetById(userId);
+            var user = _mapper.Map<UserReferenceModel>(result);
+            return Ok(user);
+        }
+
+        [AllowAnonymous]
         [HttpDelete("UserReferenceRemove/{userId}")]
-        public IActionResult UserReferenceRemove(int userId)
+        public async Task<IActionResult> UserReferenceRemove(int userId)
         {
             
-            var result = _userService.UserReferenceRemove(userId);
-            return Ok(new { message = result });
+            var result =await _userService.UserReferenceRemove(userId);
+            return Ok(new { status = result });
         }
     }
 }

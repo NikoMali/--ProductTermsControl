@@ -8,6 +8,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ProductTermsControl.Application.Services;
 using ProductTermsControl.Domain.Entities;
+using ProductTermsControl.Insfrastructure.Filter;
+using ProductTermsControl.Insfrastructure.Paging.Helpers;
+using ProductTermsControl.Insfrastructure.Paging.Services;
 using ProductTermsControl.WebAPI.Models;
 
 namespace ProductTermsControl.WebAPI.Controllers
@@ -21,56 +24,65 @@ namespace ProductTermsControl.WebAPI.Controllers
         private IProductToBranchService _productToBranchService;
         private IResponsiblePersonsForProductService _responsiblePersonsByProductService;
         private IMapper _mapper;
+        private readonly IUriService _uriService;
 
         public MagazineBranchesController(
             IMagazineBranchService  magazineBranchService,
             IProductToBranchService productToBranchService,
             IResponsiblePersonsForProductService responsiblePersonsByProductService,
-            IMapper mapper)
+            IMapper mapper,
+            IUriService uriService
+            )
         {
             _MagazineBranchService = magazineBranchService;
             _productToBranchService = productToBranchService;
             _responsiblePersonsByProductService = responsiblePersonsByProductService;
             _mapper = mapper;
+            _uriService = uriService;
         }
 
         [HttpGet]
-        public IActionResult GetAll()
+        public async Task<IActionResult> GetAll([FromQuery] PaginationFilter filter)
         {
-            var MagazineBranchs = _MagazineBranchService.GetAll();
+            /*var MagazineBranchs =await _MagazineBranchService.GetAll();
             var model = _mapper.Map<IList<MagazineBranchModel>>(MagazineBranchs);
-            return Ok(model);
+            return Ok(model);*/
+            var route = Request.Path.Value;
+            var pageData = await _MagazineBranchService.GetAllForPaging(filter.PageNumber, filter.PageSize);
+            var model = _mapper.Map<List<MagazineBranchModel>>(pageData.entities);
+            var pagedReponse = PaginationHelper.CreatePagedReponse<MagazineBranchModel>(model, pageData.PaginationFilter, pageData.totalRecords, _uriService, route);
+            return Ok(pagedReponse);
         }
 
         [HttpGet("{Id}")]
-        public IActionResult GetById(int Id)
+        public async Task<IActionResult> GetById(int Id)
         {
-            var MagazineBranch = _MagazineBranchService.GetById(Id);
+            var MagazineBranch =await _MagazineBranchService.GetById(Id);
             var model = _mapper.Map<MagazineBranchModel>(MagazineBranch);
             return Ok(model);
         }
         [HttpPut]
-        public IActionResult Update([FromBody] MagazineBranchModel MagazineBranchModel)
+        public async Task<IActionResult> Update([FromBody] MagazineBranchModel MagazineBranchModel)
         {
             var model = _mapper.Map<MagazineBranch>(MagazineBranchModel);
-            var MagazineBranch = _MagazineBranchService.Update(model);
-            return Ok(MagazineBranch);
+            var MagazineBranch =await _MagazineBranchService.Update(model);
+            return Ok(_mapper.Map<MagazineBranchModel>(MagazineBranch));
         }
 
         [HttpDelete("{Id}")]
-        public IActionResult Delete(int Id)
+        public async Task<IActionResult> Delete(int Id)
         {
-            var MagazineBranchResult = _MagazineBranchService.Delete(Id);
+            var MagazineBranchResult =await _MagazineBranchService.Delete(Id);
             return Ok(MagazineBranchResult);
         }
         [HttpPost]
-        public IActionResult Create([FromBody] MagazineBranchModel MagazineBranchModel)
+        public async Task<IActionResult> Create([FromBody] MagazineBranchModel MagazineBranchModel)
         {
             var model = _mapper.Map<MagazineBranch>(MagazineBranchModel);
             model.CreateDate = DateTime.Now;
             model.UpdateDate = DateTime.Now;
-            var MagazineBranch = _MagazineBranchService.Create(model);
-            return Ok(MagazineBranch);
+            var MagazineBranch =await _MagazineBranchService.Create(model);
+            return Ok(_mapper.Map<MagazineBranchModel>(MagazineBranch));
         }
         
         /*[HttpPost("ProductsWithTerm")]
