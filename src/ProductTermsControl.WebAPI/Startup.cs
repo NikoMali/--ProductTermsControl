@@ -74,7 +74,7 @@ namespace ProductTermsControl.WebAPI
 
                 // global cors policy
                 app.UseCors(builder => builder
-                        .WithOrigins("http://localhost:4200")
+                        .WithOrigins("http://localhost:4200", "http://161.97.167.22:8080")
                         .AllowAnyMethod()
                         .AllowAnyHeader()
                         .AllowCredentials()

@@ -1,4 +1,5 @@
-﻿using ProductTermsControl.Application.Helpers;
+﻿using Microsoft.EntityFrameworkCore;
+using ProductTermsControl.Application.Helpers;
 using ProductTermsControl.Domain.Entities;
 using ProductTermsControl.Domain.Interfaces;
 using ProductTermsControl.Insfrastructure.Filter;
@@ -6,57 +7,60 @@ using ProductTermsControl.Insfrastructure.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using AppException = ProductTermsControl.Insfrastructure.Helpers.AppException;
+
 namespace ProductTermsControl.Application.Services
 {
-    public interface ICompanyService : IDisposable
+    public interface ICompanyService
     {
-        IEnumerable<Company> GetAll();
-        string Update(Company company);
-        string Delete(int Id);
-        Company GetById(int Id);
-        string Create(Company company);
-        GetAllWithPaging<Company> GetAllForPaging(int PageNumber, int PageSize);
+        Task<IEnumerable<Company>> GetAll();
+        Task<Company> Update(Company company);
+        Task<string> Delete(int Id);
+        Task<Company> GetById(int Id);
+        Task<Company> Create(Company company);
+        Task<GetAllWithPaging<Company>> GetAllForPaging(int PageNumber, int PageSize);
     }
 
     public class CompanyService : ICompanyService
     {
-        private readonly ICompanyRepository _companyRepository;
+        private readonly DataContext _context;
 
-        public CompanyService(ICompanyRepository companyRepository)
+        public CompanyService(DataContext context)
         {
-            _companyRepository = companyRepository;
+            _context = context;
         }
-        public IEnumerable<Company> GetAll()
+        public async Task<IEnumerable<Company>> GetAll()
         {
-            return _companyRepository.GetAll();
+            return await _context.Companys.ToListAsync();
         }
 
-        public string Update(Company Company)
+        public async Task<Company> Update(Company Company)
         {
             try
             {
-                _companyRepository.Update(Company);
-                _companyRepository.SaveChanges();
-                return ResultStatus.SUCCESS;
+                _context.Companys.Update(Company);
+                await _context.SaveChangesAsync();
+                return Company;
             }
             catch (Exception)
             {
-                return ResultStatus.FAILED;
+                throw new AppException(ResultStatus.FAILED);
             }
            
         }
 
-        public Company GetById(int Id) 
+        public async Task<Company> GetById(int Id) 
         {
-            return _companyRepository.GetById(Id);
+            return await _context.Companys.FindAsync(Id);
         }
 
-        public string Delete(int Id)
+        public async Task<string> Delete(int Id)
         {
             try
             {
-                _companyRepository.Remove(Id);
-                _companyRepository.SaveChanges();
+                _context.Companys.Remove(await _context.Companys.FindAsync(Id));
+                await _context.SaveChangesAsync();
                 return ResultStatus.SUCCESS;
             }
             catch (Exception)
@@ -65,29 +69,26 @@ namespace ProductTermsControl.Application.Services
             }
         }
 
-        public string Create(Company Company)
+        public async Task<Company> Create(Company Company)
         {
-            _companyRepository.Add(Company);
-            _companyRepository.SaveChanges();
-            return ResultStatus.SUCCESS;
+            await _context.Companys.AddAsync(Company);
+            await _context.SaveChangesAsync();
+            return Company;
         }
-        public GetAllWithPaging<Company> GetAllForPaging(int PageNumber, int PageSize)
+        public async Task<GetAllWithPaging<Company>> GetAllForPaging(int PageNumber, int PageSize)
         {
             
             var validFilter = new PaginationFilter(PageNumber, PageSize);
-            var pagedData = _companyRepository.GetAll() 
+            var totalRecords = _context.Companys.CountAsync();
+            var pagedData =await _context.Companys
                 .Skip((validFilter.PageNumber - 1) * validFilter.PageSize)
                 .Take(validFilter.PageSize)
-                .ToList();
+                .ToListAsync();
 
             
-            var totalRecords = _companyRepository.GetAll().Count();
-            var result = new GetAllWithPaging<Company>(validFilter, pagedData, totalRecords);
+            var result = new GetAllWithPaging<Company>(validFilter, pagedData,await totalRecords);
             return result;
         }
-        public void Dispose()
-        {
-            GC.SuppressFinalize(this);
-        }
+        
     }
 }
