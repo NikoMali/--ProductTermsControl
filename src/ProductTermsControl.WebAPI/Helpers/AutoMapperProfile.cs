@@ -45,6 +45,12 @@ namespace ProductTermsControl.WebAPI.Helpers
             CreateMap<UpdateModel, UserReference>();
             CreateMap<UserReference, UpdateModel>();
 
+            CreateMap<PositionModel, Position>();
+            CreateMap<Position, PositionModel>();
+
+            CreateMap<UserModel, UserWithReference>();
+            CreateMap<UserWithReference, UserModel>();
+
         }
     }
 }

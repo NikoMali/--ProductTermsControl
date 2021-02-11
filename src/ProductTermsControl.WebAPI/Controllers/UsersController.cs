@@ -14,9 +14,10 @@ using ProductTermsControl.Domain.Entities;
 using ProductTermsControl.WebAPI.Models.Users;
 using ProductTermsControl.Application.Services;
 using System.Threading.Tasks;
-using ProductTermsControl.Insfrastructure.Filter;
-using ProductTermsControl.Insfrastructure.Paging.Helpers;
-using ProductTermsControl.Insfrastructure.Paging.Services;
+using ProductTermsControl.Application.Filter;
+using ProductTermsControl.Application.Paging.Helpers;
+using ProductTermsControl.Application.Paging.Services;
+using ProductTermsControl.WebAPI.Models;
 
 namespace WebApi.Controllers
 {
@@ -83,12 +84,14 @@ namespace WebApi.Controllers
         {
             // map model to entity
             var user = _mapper.Map<User>(model);
-
+            var userReference = _mapper.Map<UserReference>(model);
             try
             {
                 // create user
-                var createUser = await _userService.Create(user, model.Password);
-                return Ok(_mapper.Map<RegisterModel>(createUser));
+                var createUser = await _userService.Create(user, userReference, model.Password);
+                var userWithReference = _mapper.Map<RegisterModel>(createUser);
+                userWithReference = _mapper.Map<RegisterModel>(await _userService.UserReferenceGetById(createUser.Id));
+                return Ok(userWithReference);
             }
             catch (AppException ex)
             {
@@ -96,7 +99,7 @@ namespace WebApi.Controllers
                 return BadRequest(new { message = ex.Message });
             }
         }
-
+        [AllowAnonymous]    
         [HttpGet]
         public async Task<IActionResult> GetAll([FromQuery] PaginationFilter filter)
         {
@@ -114,7 +117,9 @@ namespace WebApi.Controllers
         public async Task<IActionResult> GetById(int id)
         {
             var user =await _userService.GetById(id);
+            var userReference = await _userService.UserReferenceGetById(id);
             var model = _mapper.Map<UserModel>(user);
+            model = _mapper.Map<UserModel>(userReference);
             return Ok(model);
         }
 
@@ -124,12 +129,14 @@ namespace WebApi.Controllers
             // map model to entity and set id
             var user = _mapper.Map<User>(model);
             user.Id = id;
-
+            var userReference = _mapper.Map<UserReference>(model);
             try
             {
                 // update user 
-                var updateUser = await _userService.Update(user, model.Password);
-                return Ok(_mapper.Map<UpdateModel>(updateUser));
+                var updateUser = await _userService.Update(user, userReference, model.Password);
+                var updateUserWithReference = _mapper.Map<UpdateModel>(updateUser);
+                updateUserWithReference = _mapper.Map<UpdateModel>(await _userService.UserReferenceGetById(updateUser.Id));
+                return Ok(updateUserWithReference);
             }
             catch (AppException ex)
             {
@@ -175,6 +182,42 @@ namespace WebApi.Controllers
         {
             
             var result =await _userService.UserReferenceRemove(userId);
+            return Ok(new { status = result });
+        }
+        ////////////////////////////////////////////////////////
+        ///
+
+        [AllowAnonymous]
+        [HttpPost("PositionCreate")]
+        public async Task<IActionResult> PositionCreate([FromBody] PositionModel model)
+        {
+            var position = _mapper.Map<Position>(model);
+            var result = await _userService.PositionCreate(position);
+            return Ok(result);
+        }
+        [AllowAnonymous]
+        [HttpPut("PositionUpdate")]
+        public async Task<IActionResult> PositionUpdate([FromBody] PositionModel model)
+        {
+            var position = _mapper.Map<Position>(model);
+            var result = await _userService.PositionUpdate(position);
+            return Ok(result);
+        }
+        [AllowAnonymous]
+        [HttpGet("PositionGet/{Id}")]
+        public async Task<IActionResult> PositionGet(int Id)
+        {
+            var result = await _userService.PositionGetById(Id);
+            var position = _mapper.Map<PositionModel>(result);
+            return Ok(position);
+        }
+
+        [AllowAnonymous]
+        [HttpDelete("PositionRemove/{Id}")]
+        public async Task<IActionResult> PositionRemove(int Id)
+        {
+
+            var result = await _userService.PositionRemove(Id);
             return Ok(new { status = result });
         }
     }

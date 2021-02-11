@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ProductTermsControl.Domain.Interfaces;
-using ProductTermsControl.Insfrastructure.Filter;
+using ProductTermsControl.Application.Filter;
 using ProductTermsControl.Insfrastructure.Helpers;
 using System;
 using System.Collections.Generic;

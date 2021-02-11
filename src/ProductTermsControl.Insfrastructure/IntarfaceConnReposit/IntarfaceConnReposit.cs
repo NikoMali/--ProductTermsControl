@@ -2,9 +2,10 @@
 using Microsoft.Extensions.DependencyInjection;
 using ProductTermsControl.Domain.Entities;
 using ProductTermsControl.Domain.Interfaces;
-using ProductTermsControl.Insfrastructure.Paging.Services;
+using ProductTermsControl.Application.Paging.Services;
 using ProductTermsControl.Insfrastructure.Repository;
-
+using ProductTermsControl.Application.ApplicationDbContext;
+using ProductTermsControl.Insfrastructure.Helpers;
 
 namespace ProductTermsControl.Insfrastructure.IntarfaceConnReposit
 {
@@ -31,6 +32,8 @@ namespace ProductTermsControl.Insfrastructure.IntarfaceConnReposit
                 return new UriService(uri);
             });
             ////
+            
+            services.AddScoped<IApplicationDbContext>(provider => provider.GetService<DataContext>());
         }
     }
 }

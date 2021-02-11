@@ -4,7 +4,7 @@
         <name>ProductTermsControl.WebAPI</name>
     </assembly>
     <members>
-        <member name="M:ProductTermsControl.WebAPI.Controllers.CompaniesController.GetAll(ProductTermsControl.Insfrastructure.Filter.PaginationFilter)">
+        <member name="M:ProductTermsControl.WebAPI.Controllers.CompaniesController.GetAll(ProductTermsControl.Application.Filter.PaginationFilter)">
             <summary>
             Company Full List
             </summary>
@@ -28,6 +28,9 @@
             <summary>
             Company Create
             </summary>
+        </member>
+        <member name="M:WebApi.Controllers.UsersController.PositionCreate(ProductTermsControl.WebAPI.Models.PositionModel)">
+            
         </member>
     </members>
 </doc>

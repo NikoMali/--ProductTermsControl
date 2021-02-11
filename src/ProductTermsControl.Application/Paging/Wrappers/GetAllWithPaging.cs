@@ -1,9 +1,9 @@
-﻿using ProductTermsControl.Insfrastructure.Filter;
+﻿using ProductTermsControl.Application.Filter;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace ProductTermsControl.Insfrastructure.Helpers
+namespace ProductTermsControl.Application.Helpers
 {
     public class GetAllWithPaging<T>
     {

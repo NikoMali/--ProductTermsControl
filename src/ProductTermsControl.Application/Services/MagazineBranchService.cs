@@ -2,14 +2,14 @@
 using ProductTermsControl.Application.Helpers;
 using ProductTermsControl.Domain.Entities;
 using ProductTermsControl.Domain.Interfaces;
-using ProductTermsControl.Insfrastructure.Filter;
-using ProductTermsControl.Insfrastructure.Helpers;
+using ProductTermsControl.Application.Filter;
+using ProductTermsControl.Application.ApplicationDbContext;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using AppException = ProductTermsControl.Insfrastructure.Helpers.AppException;
+using AppException = ProductTermsControl.Application.Helpers.AppException;
 
 namespace ProductTermsControl.Application.Services
 {
@@ -26,9 +26,9 @@ namespace ProductTermsControl.Application.Services
 
     public class MagazineBranchService : IMagazineBranchService
     {
-        private readonly DataContext _context;
+        private readonly IApplicationDbContext _context;
 
-        public MagazineBranchService(DataContext context)
+        public MagazineBranchService(IApplicationDbContext context)
         {
             _context = context;
         }

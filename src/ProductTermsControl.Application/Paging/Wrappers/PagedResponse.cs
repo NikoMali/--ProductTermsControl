@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ProductTermsControl.Insfrastructure.Wrappers
+namespace ProductTermsControl.Application.Wrappers
 {
     public class PagedResponse<T> : Response<T>
     {

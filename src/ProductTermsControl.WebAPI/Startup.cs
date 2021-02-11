@@ -10,6 +10,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using ProductTermsControl.Application.IntarfaceConnReposit;
 using ProductTermsControl.Insfrastructure.Helpers;
+using ProductTermsControl.Application.ApplicationDbContext;
 using ProductTermsControl.Insfrastructure.IntarfaceConnReposit;
 using ProductTermsControl.Insfrastructure.StartUpExtensions;
 using System;

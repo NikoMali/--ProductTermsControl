@@ -2,14 +2,15 @@
 using ProductTermsControl.Application.Helpers;
 using ProductTermsControl.Domain.Entities;
 using ProductTermsControl.Domain.Interfaces;
-using ProductTermsControl.Insfrastructure.Filter;
-using ProductTermsControl.Insfrastructure.Helpers;
+using ProductTermsControl.Application.Filter;
+using ProductTermsControl.Application.ApplicationDbContext;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using AppException = ProductTermsControl.Insfrastructure.Helpers.AppException;
+using AppException = ProductTermsControl.Application.Helpers.AppException;
+using ProductTermsControl.Domain.HelperModel;
 
 namespace ProductTermsControl.Application.Services
 {
@@ -18,24 +19,29 @@ namespace ProductTermsControl.Application.Services
         Task<User> Authenticate(string username, string password);
         Task<IEnumerable<User>> GetAll();
         Task<User> GetById(int id);
-        Task<User> Create(User user, string password);
-        Task<User> Update(User user, string password = null);
+        Task<User> Create(User user, UserReference userReference, string password);
+        Task<User> Update(User user, UserReference userReference, string password = null);
         Task<string> Delete(int id);
 
-        Task<GetAllWithPaging<User>> GetAllForPaging(int PageNumber, int PageSize);
+        Task<GetAllWithPaging<UserWithReference>> GetAllForPaging(int PageNumber, int PageSize);
 
         Task<UserReference> UserReferenceCreate(UserReference userReference);
         Task<UserReference> UserReferenceUpdate(UserReference userReference);
         Task<string> UserReferenceRemove(int userId);
         Task<UserReference> UserReferenceGetById(int userId);
+
+        Task<Position> PositionCreate(Position position);
+        Task<Position> PositionUpdate(Position position);
+        Task<string> PositionRemove(int Id);
+        Task<Position> PositionGetById(int Id);
     }
 
     public class UserService : IUserService
     {
-        private readonly DataContext _context;
+        private readonly IApplicationDbContext _context;
        
 
-        public UserService(DataContext context)
+        public UserService(IApplicationDbContext context)
         {
             _context = context;
         }
@@ -69,11 +75,14 @@ namespace ProductTermsControl.Application.Services
             return await _context.Users.FindAsync(id);
         }
 
-        public async Task<User> Create(User user, string password)
+        public async Task<User> Create(User user, UserReference userReference, string password)
         {
             // validation
             if (string.IsNullOrWhiteSpace(password))
                 throw new AppException("Password is required");
+            if(string.IsNullOrWhiteSpace(userReference.PositionId.ToString()))
+                throw new AppException("PositionId is required");
+
 
             if (await _context.Users.AnyAsync(u=>u.Username == user.Username))
                 throw new AppException("Username \"" + user.Username + "\" is already taken");
@@ -83,15 +92,17 @@ namespace ProductTermsControl.Application.Services
 
             user.PasswordHash = passwordHash;
             user.PasswordSalt = passwordSalt;
-
             await _context.Users.AddAsync(user);
             await _context.SaveChangesAsync();
-            
+            userReference.UserId = user.Id;
+            await _context.UserReferences.AddAsync(userReference);
+            await _context.SaveChangesAsync();
+
 
             return user;
         }
 
-        public async Task<User> Update(User userParam, string password = null)
+        public async Task<User> Update(User userParam,UserReference userReference ,string password = null)
         {
             var user =await _context.Users.FindAsync(userParam.Id);
 
@@ -126,6 +137,7 @@ namespace ProductTermsControl.Application.Services
             }
 
             _context.Users.Update(user);
+            _context.UserReferences.Update(userReference);
             await _context.SaveChangesAsync();
             return user;
 
@@ -201,19 +213,50 @@ namespace ProductTermsControl.Application.Services
             return await _context.UserReferences.FindAsync(userId);
         }
 
-        public async Task<GetAllWithPaging<User>> GetAllForPaging(int PageNumber, int PageSize)
+        public async Task<GetAllWithPaging<UserWithReference>> GetAllForPaging(int PageNumber, int PageSize)
         {
 
             var validFilter = new PaginationFilter(PageNumber, PageSize);
             var totalRecords = _context.Users.CountAsync();
             var pagedData = await _context.Users
+                .Join(_context.UserReferences,
+                U=>U.Id,
+                UR=>UR.UserId,
+                (U,UR) => new UserWithReference { user =U , userReference = UR}
+                )
                 .Skip((validFilter.PageNumber - 1) * validFilter.PageSize)
                 .Take(validFilter.PageSize)
                 .ToListAsync();
 
 
-            var result = new GetAllWithPaging<User>(validFilter, pagedData, await totalRecords);
+            var result = new GetAllWithPaging<UserWithReference>(validFilter, pagedData, await totalRecords);
             return result;
+        }
+
+
+        
+        public async Task<Position> PositionCreate(Position position)
+        {
+            await _context.Positions.AddAsync(position);
+            await _context.SaveChangesAsync();
+            return position;
+        }
+        public async Task<Position> PositionUpdate(Position position)
+        {
+            _context.Positions.Update(position);
+            await _context.SaveChangesAsync();
+            return position;
+        }
+        public async Task<string> PositionRemove(int Id)
+        {
+            _context.Positions.Remove(await _context.Positions.FindAsync(Id));
+            await _context.SaveChangesAsync();
+            return ResultStatus.SUCCESS;
+        }
+
+        public async Task<Position> PositionGetById(int Id)
+        {
+            return await _context.Positions.FindAsync(Id);
         }
     }
 }

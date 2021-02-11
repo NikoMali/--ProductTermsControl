@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.WebUtilities;
-using ProductTermsControl.Insfrastructure.Filter;
+using ProductTermsControl.Application.Filter;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace ProductTermsControl.Insfrastructure.Paging.Services
+namespace ProductTermsControl.Application.Paging.Services
 {
     public interface IUriService
     {
