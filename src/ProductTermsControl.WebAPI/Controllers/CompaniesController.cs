@@ -8,10 +8,10 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ProductTermsControl.Application.Services;
 using ProductTermsControl.Domain.Entities;
-using ProductTermsControl.Insfrastructure.Filter;
-using ProductTermsControl.Insfrastructure.Paging.Helpers;
-using ProductTermsControl.Insfrastructure.Paging.Services;
-using ProductTermsControl.Insfrastructure.Wrappers;
+using ProductTermsControl.Application.Filter;
+using ProductTermsControl.Application.Paging.Helpers;
+using ProductTermsControl.Application.Paging.Services;
+using ProductTermsControl.Application.Wrappers;
 using ProductTermsControl.WebAPI.Models;
 
 namespace ProductTermsControl.WebAPI.Controllers
@@ -76,7 +76,7 @@ namespace ProductTermsControl.WebAPI.Controllers
         public async Task<IActionResult> Delete(int Id)
         {
             var CompanyResult =await _CompanyService.Delete(Id);
-            return Ok(CompanyResult);
+            return Ok(new { status = CompanyResult });
         }
         /// <summary>
         /// Company Create

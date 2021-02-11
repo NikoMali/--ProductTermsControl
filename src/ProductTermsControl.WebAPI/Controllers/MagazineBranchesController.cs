@@ -8,9 +8,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ProductTermsControl.Application.Services;
 using ProductTermsControl.Domain.Entities;
-using ProductTermsControl.Insfrastructure.Filter;
-using ProductTermsControl.Insfrastructure.Paging.Helpers;
-using ProductTermsControl.Insfrastructure.Paging.Services;
+using ProductTermsControl.Application.Filter;
+using ProductTermsControl.Application.Paging.Helpers;
+using ProductTermsControl.Application.Paging.Services;
 using ProductTermsControl.WebAPI.Models;
 
 namespace ProductTermsControl.WebAPI.Controllers
@@ -73,7 +73,7 @@ namespace ProductTermsControl.WebAPI.Controllers
         public async Task<IActionResult> Delete(int Id)
         {
             var MagazineBranchResult =await _MagazineBranchService.Delete(Id);
-            return Ok(MagazineBranchResult);
+            return Ok(new { status = MagazineBranchResult });
         }
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] MagazineBranchModel MagazineBranchModel)

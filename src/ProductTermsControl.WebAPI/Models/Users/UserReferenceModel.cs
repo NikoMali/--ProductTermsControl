@@ -4,6 +4,7 @@ namespace ProductTermsControl.WebAPI.Models.Users
     {
         public int UserId { get; set; }
         public int MagazineBranchId { get; set; }
+        public int PositionId { get; set; }
 
     }
 }

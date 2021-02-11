@@ -2,13 +2,13 @@
 using ProductTermsControl.Application.Helpers;
 using ProductTermsControl.Domain.Entities;
 using ProductTermsControl.Domain.Interfaces;
-using ProductTermsControl.Insfrastructure.Filter;
-using ProductTermsControl.Insfrastructure.Helpers;
+using ProductTermsControl.Application.Filter;
+using ProductTermsControl.Application.ApplicationDbContext;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using AppException = ProductTermsControl.Insfrastructure.Helpers.AppException;
+using AppException = ProductTermsControl.Application.Helpers.AppException;
 
 namespace ProductTermsControl.Application.Services
 {
@@ -24,9 +24,9 @@ namespace ProductTermsControl.Application.Services
 
     public class CompanyService : ICompanyService
     {
-        private readonly DataContext _context;
+        private readonly IApplicationDbContext _context;
 
-        public CompanyService(DataContext context)
+        public CompanyService(IApplicationDbContext context)
         {
             _context = context;
         }

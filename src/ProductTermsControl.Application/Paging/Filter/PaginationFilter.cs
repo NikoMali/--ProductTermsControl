@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ProductTermsControl.Insfrastructure.Filter
+namespace ProductTermsControl.Application.Filter
 {
     public class PaginationFilter
     {

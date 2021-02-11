@@ -1,11 +1,11 @@
-﻿using ProductTermsControl.Insfrastructure.Helpers;
-using ProductTermsControl.Insfrastructure.Filter;
+﻿using ProductTermsControl.Application.Helpers;
+using ProductTermsControl.Application.Filter;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace ProductTermsControl.Insfrastructure.Paging.Helpers
+namespace ProductTermsControl.Application.Paging.Helpers
 {
     public class PaginationData
     {

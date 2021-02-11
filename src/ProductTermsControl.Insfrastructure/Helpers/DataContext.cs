@@ -1,10 +1,14 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using ProductTermsControl.Application.ApplicationDbContext;
 using ProductTermsControl.Domain.Entities;
+using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace ProductTermsControl.Insfrastructure.Helpers
 {
-    public class DataContext : DbContext
+    public class DataContext : DbContext, IApplicationDbContext
     {
         protected readonly IConfiguration Configuration;
 
@@ -28,5 +32,26 @@ namespace ProductTermsControl.Insfrastructure.Helpers
         public DbSet<ResponsiblePersonsForProduct> ResponsiblePersonsForProducts { get; set; }
         public DbSet<ResponsiblePersonsGroup> ResponsiblePersonsGroups { get; set; }
         public DbSet<UserReference> UserReferences { get; set; }
+        public DbSet<Position> Positions { get; set; }
+
+        public async Task<int> SaveChangesAsync()
+        {
+            
+
+            var result = await base.SaveChangesAsync();
+
+           
+
+            return result;
+        }
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+
+            base.OnModelCreating(builder);
+        }
+
+       
     }
 }
