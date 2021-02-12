@@ -4,7 +4,7 @@ using MySql.Data.EntityFrameworkCore.Metadata;
 
 namespace ProductTermsControl.Insfrastructure.Migrations
 {
-    public partial class _001 : Migration
+    public partial class Initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -41,6 +41,22 @@ namespace ProductTermsControl.Insfrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Positions",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                    Name = table.Column<string>(nullable: true),
+                    IsActive = table.Column<bool>(nullable: false),
+                    CreateDate = table.Column<DateTime>(nullable: false),
+                    UpdateDate = table.Column<DateTime>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Positions", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "ResponsiblePersonsGroups",
                 columns: table => new
                 {
@@ -64,6 +80,9 @@ namespace ProductTermsControl.Insfrastructure.Migrations
                     FirstName = table.Column<string>(nullable: true),
                     LastName = table.Column<string>(nullable: true),
                     Username = table.Column<string>(nullable: true),
+                    Email = table.Column<string>(nullable: true),
+                    Avatar = table.Column<string>(nullable: true),
+                    MobileNumber = table.Column<string>(nullable: true),
                     PasswordHash = table.Column<byte[]>(nullable: true),
                     PasswordSalt = table.Column<byte[]>(nullable: true),
                     CreateDate = table.Column<DateTime>(nullable: false),
@@ -190,7 +209,8 @@ namespace ProductTermsControl.Insfrastructure.Migrations
                 columns: table => new
                 {
                     UserId = table.Column<int>(nullable: false),
-                    MagazineBranchId = table.Column<int>(nullable: false)
+                    MagazineBranchId = table.Column<int>(nullable: false),
+                    PositionId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -199,6 +219,12 @@ namespace ProductTermsControl.Insfrastructure.Migrations
                         name: "FK_UserReferences_MagazineBranches_MagazineBranchId",
                         column: x => x.MagazineBranchId,
                         principalTable: "MagazineBranches",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_UserReferences_Positions_PositionId",
+                        column: x => x.PositionId,
+                        principalTable: "Positions",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -248,6 +274,11 @@ namespace ProductTermsControl.Insfrastructure.Migrations
                 name: "IX_UserReferences_MagazineBranchId",
                 table: "UserReferences",
                 column: "MagazineBranchId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserReferences_PositionId",
+                table: "UserReferences",
+                column: "PositionId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -269,6 +300,9 @@ namespace ProductTermsControl.Insfrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "MagazineBranches");
+
+            migrationBuilder.DropTable(
+                name: "Positions");
 
             migrationBuilder.DropTable(
                 name: "Users");
