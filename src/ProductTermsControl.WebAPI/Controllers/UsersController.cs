@@ -89,8 +89,8 @@ namespace WebApi.Controllers
             {
                 // create user
                 var createUser = await _userService.Create(user, userReference, model.Password);
-                var userWithReference = _mapper.Map<RegisterModel>(createUser);
-                userWithReference = _mapper.Map<RegisterModel>(await _userService.UserReferenceGetById(createUser.Id));
+                var userWithReference = new RegisterModel(createUser, await _userService.UserReferenceGetById(createUser.Id));
+                //userWithReference = _mapper.Map<RegisterModel>(await _userService.UserReferenceGetById(createUser.Id));
                 return Ok(userWithReference);
             }
             catch (AppException ex)
@@ -118,8 +118,8 @@ namespace WebApi.Controllers
         {
             var user =await _userService.GetById(id);
             var userReference = await _userService.UserReferenceGetById(id);
-            var model = _mapper.Map<UserModel>(user);
-            model = _mapper.Map<UserModel>(userReference);
+            var model =new UserModel(user, userReference);
+            //model = _mapper.Map<UserModel>(userReference);
             return Ok(model);
         }
 
@@ -134,8 +134,8 @@ namespace WebApi.Controllers
             {
                 // update user 
                 var updateUser = await _userService.Update(user, userReference, model.Password);
-                var updateUserWithReference = _mapper.Map<UpdateModel>(updateUser);
-                updateUserWithReference = _mapper.Map<UpdateModel>(await _userService.UserReferenceGetById(updateUser.Id));
+                var updateUserWithReference = new UpdateModel(updateUser, await _userService.UserReferenceGetById(updateUser.Id));
+                //updateUserWithReference = _mapper.Map<UpdateModel>(await _userService.UserReferenceGetById(updateUser.Id));
                 return Ok(updateUserWithReference);
             }
             catch (AppException ex)
