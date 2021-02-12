@@ -6,6 +6,7 @@ using ProductTermsControl.Application.Paging.Services;
 using ProductTermsControl.Insfrastructure.Repository;
 using ProductTermsControl.Application.ApplicationDbContext;
 using ProductTermsControl.Insfrastructure.Helpers;
+using ProductTermsControl.Application.Services;
 
 namespace ProductTermsControl.Insfrastructure.IntarfaceConnReposit
 {
@@ -21,6 +22,14 @@ namespace ProductTermsControl.Insfrastructure.IntarfaceConnReposit
             services.AddScoped<IResponsiblePersonsForProductRepository, ResponsiblePersonsForProductRepository>();
             services.AddScoped<IProductToBranchRepository, ProductToBranchRepository>();
             services.AddScoped<ICommonRepository, CommonRepository>();
+            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IMagazineService, MagazineService>();
+            services.AddScoped<IMagazineBranchService, MagazineBranchService>();
+            services.AddScoped<ICompanyService, CompanyService>();
+            services.AddScoped<IProductService, ProductService>();
+            services.AddScoped<IResponsiblePersonsGroupService, ResponsiblePersonsGroupService>();
+            services.AddScoped<IResponsiblePersonsForProductService, ResponsiblePersonsForProductService>();
+            services.AddScoped<IProductToBranchService, ProductToBranchService>();
 
             //for paging
             services.AddHttpContextAccessor();

@@ -12,6 +12,7 @@ namespace ProductTermsControl.WebAPI.Helpers
         public AutoMapperProfile()
         {
             CreateMap<User, UserModel>();
+            CreateMap<UserModel, User>();
             CreateMap<RegisterModel, User>();
             CreateMap<User, RegisterModel>();
             CreateMap<UpdateModel, User>();
