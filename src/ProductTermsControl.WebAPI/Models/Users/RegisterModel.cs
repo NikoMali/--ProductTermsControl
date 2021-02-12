@@ -1,3 +1,4 @@
+using ProductTermsControl.Domain.Entities;
 using System.ComponentModel.DataAnnotations;
 
 namespace ProductTermsControl.WebAPI.Models.Users
@@ -22,5 +23,26 @@ namespace ProductTermsControl.WebAPI.Models.Users
         public int MagazineBranchId { get; set; }
         [Required]
         public int PositionId { get; set; }
+
+
+        public RegisterModel()
+        {
+
+        }
+
+
+
+        public RegisterModel(User user, UserReference userReference)
+        {
+
+            FirstName = user.FirstName;
+            LastName = user.LastName;
+            Username = user.Username;
+            Email = user.Email;
+            Avatar = user.Avatar;
+            MobileNumber = user.MobileNumber;
+            MagazineBranchId = userReference.MagazineBranchId;
+            PositionId = userReference.PositionId;
+        }
     }
 }

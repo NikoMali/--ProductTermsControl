@@ -1,27 +1,20 @@
 using AutoMapper;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
-using ProductTermsControl.Application.IntarfaceConnReposit;
 using ProductTermsControl.Insfrastructure.Helpers;
-using ProductTermsControl.Application.ApplicationDbContext;
 using ProductTermsControl.Insfrastructure.IntarfaceConnReposit;
 using ProductTermsControl.Insfrastructure.StartUpExtensions;
 using System;
 using System.Text;
-using System.Threading.Tasks;
 
 
 namespace ProductTermsControl.WebAPI
 {
-    
-        public class Startup
+
+    public class Startup
         {
             private readonly IWebHostEnvironment _env;
             private readonly IConfiguration _configuration;
@@ -101,7 +94,7 @@ namespace ProductTermsControl.WebAPI
         {
             // Adding dependencies from another layers (isolated from Presentation)
             IntarfaceConnReposit.RegisterServices(services);
-            IntfConRepoForBusinessLogic.RegisterServices(services);
+            
         }
     }
     }

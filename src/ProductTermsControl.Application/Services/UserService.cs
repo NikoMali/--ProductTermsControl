@@ -137,6 +137,7 @@ namespace ProductTermsControl.Application.Services
             }
 
             _context.Users.Update(user);
+            userReference.UserId = user.Id;
             _context.UserReferences.Update(userReference);
             await _context.SaveChangesAsync();
             return user;
@@ -219,11 +220,16 @@ namespace ProductTermsControl.Application.Services
             var validFilter = new PaginationFilter(PageNumber, PageSize);
             var totalRecords = _context.Users.CountAsync();
             var pagedData = await _context.Users
-                .Join(_context.UserReferences,
+                .GroupJoin(
+                _context.UserReferences,
                 U=>U.Id,
                 UR=>UR.UserId,
-                (U,UR) => new UserWithReference { user =U , userReference = UR}
+                (U,UR) => new  { user =U , userReference = UR}
                 )
+                .SelectMany(
+                    xy=> xy.userReference.DefaultIfEmpty(),
+                    (x,y)=> new UserWithReference { user =x.user, userReference =y }
+                 )
                 .Skip((validFilter.PageNumber - 1) * validFilter.PageSize)
                 .Take(validFilter.PageSize)
                 .ToListAsync();
