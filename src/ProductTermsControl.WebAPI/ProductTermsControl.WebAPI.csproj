@@ -3,9 +3,12 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
-	<PropertyGroup>
-		<PublishWithAspNetCoreTargetManifest>false</PublishWithAspNetCoreTargetManifest>
-	</PropertyGroup>
+  <PropertyGroup>
+	<EnvironmentName>Development</EnvironmentName>
+  </PropertyGroup>
+  <PropertyGroup>
+	<PublishWithAspNetCoreTargetManifest>false</PublishWithAspNetCoreTargetManifest>
+  </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="9.0.0" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="7.0.0" />
