@@ -4,11 +4,11 @@ using MySql.Data.EntityFrameworkCore.Metadata;
 
 namespace ProductTermsControl.Insfrastructure.Migrations
 {
-    public partial class Initial : Migration
+    public partial class InitialReply : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.CreateTable(
+            /*migrationBuilder.CreateTable(
                 name: "Companys",
                 columns: table => new
                 {
@@ -278,12 +278,12 @@ namespace ProductTermsControl.Insfrastructure.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_UserReferences_PositionId",
                 table: "UserReferences",
-                column: "PositionId");
+                column: "PositionId");*/
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
+            /*migrationBuilder.DropTable(
                 name: "ProductToBranches");
 
             migrationBuilder.DropTable(
@@ -311,7 +311,7 @@ namespace ProductTermsControl.Insfrastructure.Migrations
                 name: "Companys");
 
             migrationBuilder.DropTable(
-                name: "Magazines");
+                name: "Magazines");*/
         }
     }
 }
