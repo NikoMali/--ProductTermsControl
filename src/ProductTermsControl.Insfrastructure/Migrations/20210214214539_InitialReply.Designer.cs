@@ -9,8 +9,8 @@ using ProductTermsControl.Insfrastructure.Helpers;
 namespace ProductTermsControl.Insfrastructure.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20210208220257_PositionTable")]
-    partial class PositionTable
+    [Migration("20210214214539_InitialReply")]
+    partial class InitialReply
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -116,7 +116,7 @@ namespace ProductTermsControl.Insfrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Position");
+                    b.ToTable("Positions");
                 });
 
             modelBuilder.Entity("ProductTermsControl.Domain.Entities.Product", b =>

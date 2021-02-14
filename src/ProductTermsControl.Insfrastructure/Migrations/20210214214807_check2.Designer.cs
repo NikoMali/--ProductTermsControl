@@ -9,8 +9,8 @@ using ProductTermsControl.Insfrastructure.Helpers;
 namespace ProductTermsControl.Insfrastructure.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20210203171125_001")]
-    partial class _001
+    [Migration("20210214214807_check2")]
+    partial class check2
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -94,6 +94,29 @@ namespace ProductTermsControl.Insfrastructure.Migrations
                     b.HasIndex("MagazineId");
 
                     b.ToTable("MagazineBranches");
+                });
+
+            modelBuilder.Entity("ProductTermsControl.Domain.Entities.Position", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("UpdateDate")
+                        .HasColumnType("datetime");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Positions");
                 });
 
             modelBuilder.Entity("ProductTermsControl.Domain.Entities.Product", b =>
@@ -212,13 +235,22 @@ namespace ProductTermsControl.Insfrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
+                    b.Property<string>("Avatar")
+                        .HasColumnType("text");
+
                     b.Property<DateTime>("CreateDate")
                         .HasColumnType("datetime");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("text");
 
                     b.Property<string>("FirstName")
                         .HasColumnType("text");
 
                     b.Property<string>("LastName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("MobileNumber")
                         .HasColumnType("text");
 
                     b.Property<byte[]>("PasswordHash")
@@ -246,9 +278,14 @@ namespace ProductTermsControl.Insfrastructure.Migrations
                     b.Property<int>("MagazineBranchId")
                         .HasColumnType("int");
 
+                    b.Property<int>("PositionId")
+                        .HasColumnType("int");
+
                     b.HasKey("UserId");
 
                     b.HasIndex("MagazineBranchId");
+
+                    b.HasIndex("PositionId");
 
                     b.ToTable("UserReferences");
                 });
@@ -312,6 +349,12 @@ namespace ProductTermsControl.Insfrastructure.Migrations
                     b.HasOne("ProductTermsControl.Domain.Entities.MagazineBranch", "MagazineBranchs")
                         .WithMany("UserReferences")
                         .HasForeignKey("MagazineBranchId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ProductTermsControl.Domain.Entities.Position", "Positions")
+                        .WithMany("UserReferences")
+                        .HasForeignKey("PositionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

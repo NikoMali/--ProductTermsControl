@@ -6,6 +6,9 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using ProductTermsControl.Application.Filter;
+using ProductTermsControl.Application.Paging.Helpers;
+using ProductTermsControl.Application.Paging.Services;
 using ProductTermsControl.Application.Services;
 using ProductTermsControl.Domain.Entities;
 using ProductTermsControl.WebAPI.Models.Magazine;
@@ -19,52 +22,61 @@ namespace ProductTermsControl.WebAPI.Controllers
     {
         private IMagazineService _magazineService;
         private IMapper _mapper;
+        private readonly IUriService _uriService;
+
 
         public MagazinesController(
             IMagazineService magazineService,
-            IMapper mapper)
+            IMapper mapper,
+            IUriService uriService
+            )
         {
             _magazineService = magazineService;
             _mapper = mapper;
+            _uriService = uriService;
         }
+        
 
         [HttpGet]
-        public IActionResult GetAll()
+        public async Task<IActionResult> GetAll([FromQuery] PaginationFilter filter)
         {
-            var magazines = _magazineService.GetAll();
-            var model = _mapper.Map<IList<MagazineModel>>(magazines);
-            return Ok(model);
+            
+            var route = Request.Path.Value;
+            var pageData = await _magazineService.GetAllForPaging(filter.PageNumber, filter.PageSize);
+            var model = _mapper.Map<List<MagazineModel>>(pageData.entities);
+            var pagedReponse = PaginationHelper.CreatePagedReponse<MagazineModel>(model, pageData.PaginationFilter, pageData.totalRecords, _uriService, route);
+            return Ok(pagedReponse);
         }
 
         [HttpGet("{Id}")]
-        public IActionResult GetById(int Id)
+        public async Task<IActionResult> GetById(int Id)
         {
-            var magazine = _magazineService.GetById(Id);
+            var magazine =await _magazineService.GetById(Id);
             var model = _mapper.Map<MagazineModel>(magazine);
             return Ok(model);
         }
         [HttpPut]
-        public IActionResult Update([FromBody] MagazineModel magazineModel)
+        public async Task<IActionResult> Update([FromBody] MagazineModel magazineModel)
         {
             var model = _mapper.Map<Magazine>(magazineModel);
-            var magazine = _magazineService.Update(model);
-            return Ok(new { status = magazine });
+            var magazine =await _magazineService.Update(model);
+            return Ok(magazine);
         }
 
         [HttpDelete("{Id}")]
-        public IActionResult Delete(int Id)
+        public async Task<IActionResult> Delete(int Id)
         {
-            var magazineResult = _magazineService.Delete(Id);
+            var magazineResult =await _magazineService.Delete(Id);
             return Ok(new {status = magazineResult});
         }
         [HttpPost]
-        public IActionResult Create([FromBody] MagazineModel magazineModel)
+        public async Task<IActionResult> Create([FromBody] MagazineModel magazineModel)
         {
             var model = _mapper.Map<Magazine>(magazineModel);
             model.CreateDate = DateTime.Now;
             model.UpdateDate = DateTime.Now;
-            var magazine = _magazineService.Create(model);
-            return Ok(new { status = magazine });
+            var magazine =await _magazineService.Create(model);
+            return Ok(magazine);
         }
 
         //

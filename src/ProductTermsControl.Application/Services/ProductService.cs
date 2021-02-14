@@ -1,78 +1,94 @@
-﻿using ProductTermsControl.Application.Helpers;
+﻿using Microsoft.EntityFrameworkCore;
+using ProductTermsControl.Application.ApplicationDbContext;
+using ProductTermsControl.Application.Filter;
+using ProductTermsControl.Application.Helpers;
 using ProductTermsControl.Domain.Entities;
 using ProductTermsControl.Domain.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace ProductTermsControl.Application.Services
 {
-    public interface IProductService : IDisposable
+    public interface IProductService
     {
-        IEnumerable<Product> GetAll();
-        string Update(Product product);
-        string Delete(int Id);
-        Product GetById(int Id);
-        string Create(Product product);
+        Task<IEnumerable<Product>> GetAll();
+        Task<Product> Update(Product product);
+        Task<string> Delete(int Id);
+        Task<Product> GetById(int Id);
+        Task<Product> Create(Product product);
+        Task<GetAllWithPaging<Product>> GetAllForPaging(int PageNumber, int PageSize);
     }
 
     public class ProductService : IProductService
     {
-        private readonly IProductRepository _productRepository;
+        private readonly IApplicationDbContext _context;
 
-        public ProductService(IProductRepository productRepository)
+        public ProductService(IApplicationDbContext context)
         {
-            _productRepository = productRepository;
+            _context = context;
         }
-        public IEnumerable<Product> GetAll()
+        public async Task<IEnumerable<Product>> GetAll()
         {
-            return _productRepository.GetAll();
+            return await _context.Products.ToListAsync();
         }
 
-        public string Update(Product Product)
+        public async Task<Product> Update(Product Product)
         {
             try
             {
-                _productRepository.Update(Product);
-                _productRepository.SaveChanges();
-                return ResultStatus.SUCCESS;
+                _context.Products.Update(Product);
+                await _context.SaveChangesAsync();
+                return Product;
             }
             catch (Exception)
             {
-                return ResultStatus.FAILED;
+                throw new AppException(ResultStatus.FAILED);
             }
            
         }
 
-        public Product GetById(int Id) 
+        public async Task<Product> GetById(int Id) 
         {
-            return _productRepository.GetById(Id);
+            return await _context.Products.FindAsync(Id);
         }
 
-        public string Delete(int Id)
+        public async Task<string> Delete(int Id)
         {
             try
             {
-                _productRepository.Remove(Id);
-                _productRepository.SaveChanges();
+                _context.Products.Remove(await _context.Products.FindAsync(Id));
+                await _context.SaveChangesAsync();
                 return ResultStatus.SUCCESS;
             }
             catch (Exception)
             {
-                return ResultStatus.FAILED;
+                throw new AppException(ResultStatus.FAILED);
             }
         }
 
-        public string Create(Product Product)
+        public async Task<Product> Create(Product Product)
         {
-            _productRepository.Add(Product);
-            _productRepository.SaveChanges();
-            return ResultStatus.SUCCESS;
+            await _context.Products.AddAsync(Product);
+            await _context.SaveChangesAsync();
+            return Product;
+        }
+        public async Task<GetAllWithPaging<Product>> GetAllForPaging(int PageNumber, int PageSize)
+        {
+
+            var validFilter = new PaginationFilter(PageNumber, PageSize);
+            var totalRecords = _context.Products.CountAsync();
+            var pagedData = await _context.Products
+                .Skip((validFilter.PageNumber - 1) * validFilter.PageSize)
+                .Take(validFilter.PageSize)
+                .ToListAsync();
+
+
+            var result = new GetAllWithPaging<Product>(validFilter, pagedData, await totalRecords);
+            return result;
         }
 
-        public void Dispose()
-        {
-            GC.SuppressFinalize(this);
-        }
     }
 }
