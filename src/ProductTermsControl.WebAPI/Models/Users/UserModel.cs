@@ -1,9 +1,11 @@
+using ProductTermsControl.Application.Services;
 using ProductTermsControl.Domain.Entities;
 
 namespace ProductTermsControl.WebAPI.Models.Users
 {
   public class UserModel
     {
+        
         public int Id { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
@@ -12,12 +14,14 @@ namespace ProductTermsControl.WebAPI.Models.Users
         public string Avatar { get; set; }
         public string MobileNumber { get; set; }
         public int? MagazineBranchId { get; set; }
+        public string? MagazineBranch { get; set; }
         public int? PositionId { get; set; }
+        public string? Position { get; set; }
 
 
+        public UserModel() { }
 
-
-        public UserModel(User user, UserReference userReference)
+        public UserModel(User user, UserReference userReference, IUserService _userService, IMagazineBranchService _magazineBranchService)
         {
             Id = user.Id;
             FirstName = user.FirstName;
@@ -27,7 +31,15 @@ namespace ProductTermsControl.WebAPI.Models.Users
             Avatar = user.Avatar;
             MobileNumber = user.MobileNumber;
             MagazineBranchId = userReference?.MagazineBranchId;
+            if (MagazineBranchId != null)
+            {
+                MagazineBranch = _magazineBranchService.GetById(userReference.MagazineBranchId).Result.Name;
+            }
             PositionId = userReference?.PositionId;
+            if (PositionId != null)
+            {
+                Position = _userService.PositionGetById(userReference.PositionId).Result.Name;
+            }
         }
     }
 }

@@ -12,6 +12,7 @@ using ProductTermsControl.Application.Filter;
 using ProductTermsControl.Application.Paging.Helpers;
 using ProductTermsControl.Application.Paging.Services;
 using ProductTermsControl.WebAPI.Models;
+using ProductTermsControl.WebAPI.Models.Users;
 
 namespace ProductTermsControl.WebAPI.Controllers
 {
@@ -23,6 +24,7 @@ namespace ProductTermsControl.WebAPI.Controllers
         private IMagazineBranchService _MagazineBranchService;
         private IProductToBranchService _productToBranchService;
         private IResponsiblePersonsForProductService _responsiblePersonsByProductService;
+        private IUserService _userService;
         private IMapper _mapper;
         private readonly IUriService _uriService;
 
@@ -31,7 +33,8 @@ namespace ProductTermsControl.WebAPI.Controllers
             IProductToBranchService productToBranchService,
             IResponsiblePersonsForProductService responsiblePersonsByProductService,
             IMapper mapper,
-            IUriService uriService
+            IUriService uriService,
+            IUserService userService
             )
         {
             _MagazineBranchService = magazineBranchService;
@@ -39,6 +42,7 @@ namespace ProductTermsControl.WebAPI.Controllers
             _responsiblePersonsByProductService = responsiblePersonsByProductService;
             _mapper = mapper;
             _uriService = uriService;
+            _userService = userService;
         }
 
         [HttpGet]
@@ -59,6 +63,14 @@ namespace ProductTermsControl.WebAPI.Controllers
         {
             var MagazineBranch =await _MagazineBranchService.GetById(Id);
             var model = _mapper.Map<MagazineBranchModel>(MagazineBranch);
+            return Ok(model);
+        }
+        [HttpGet("{BranchId}/users")]
+        public async Task<IActionResult> GetUsersByBranchId(int BranchId)
+        {
+            var users = await _MagazineBranchService.GetUsersByBranchId(BranchId);
+            var model = new List<BranchUserModel>();
+            users.ToList().ForEach(x => model.Add(new BranchUserModel(x, _userService)));
             return Ok(model);
         }
         [HttpPut]

@@ -27,6 +27,7 @@ namespace WebApi.Controllers
     public class UsersController : ControllerBase
     {
         private IUserService _userService;
+        private IMagazineBranchService _magazineBranchService;
         private IMapper _mapper;
         private readonly AppSettings _appSettings;
         private readonly IUriService _uriService;
@@ -35,13 +36,15 @@ namespace WebApi.Controllers
             IUserService userService,
             IMapper mapper,
             IOptions<AppSettings> appSettings,
-            IUriService uriService
+            IUriService uriService,
+            IMagazineBranchService magazineBranchService
             )
         {
             _userService = userService;
             _mapper = mapper;
             _appSettings = appSettings.Value;
             _uriService = uriService;
+            _magazineBranchService = magazineBranchService;
         }
 
         [AllowAnonymous]
@@ -88,8 +91,8 @@ namespace WebApi.Controllers
             try
             {
                 // create user
-                var createUser = await _userService.Create(user, userReference, model.Password);
-                var userWithReference = new RegisterModel(createUser, await _userService.UserReferenceGetById(createUser.Id));
+                var createUser = await _userService.Create(user, model.Password);
+                var userWithReference = new RegisterModel(createUser);
                 //userWithReference = _mapper.Map<RegisterModel>(await _userService.UserReferenceGetById(createUser.Id));
                 return Ok(userWithReference);
             }
@@ -108,7 +111,8 @@ namespace WebApi.Controllers
             return Ok(model);*/
             var route = Request.Path.Value;
             var pageData = await _userService.GetAllForPaging(filter.PageNumber, filter.PageSize);
-            var model = _mapper.Map<List<UserModel>>(pageData.entities);
+            var model = new List<UserModel>();
+            pageData.entities.ForEach(x => model.Add(new UserModel(x.user,x.userReference, _userService, _magazineBranchService)));
             var pagedReponse = PaginationHelper.CreatePagedReponse<UserModel>(model, pageData.PaginationFilter, pageData.totalRecords, _uriService, route);
             return Ok(pagedReponse);
         }
@@ -118,7 +122,7 @@ namespace WebApi.Controllers
         {
             var user =await _userService.GetById(id);
             var userReference = await _userService.UserReferenceGetById(id);
-            var model =new UserModel(user, userReference);
+            var model =new UserModel(user, userReference, _userService, _magazineBranchService);
             //model = _mapper.Map<UserModel>(userReference);
             return Ok(model);
         }
@@ -133,8 +137,8 @@ namespace WebApi.Controllers
             try
             {
                 // update user 
-                var updateUser = await _userService.Update(user, userReference, model.Password);
-                var updateUserWithReference = new UpdateModel(updateUser, await _userService.UserReferenceGetById(updateUser.Id));
+                var updateUser = await _userService.Update(user, model.Password);
+                var updateUserWithReference = new UpdateModel(updateUser);
                 //updateUserWithReference = _mapper.Map<UpdateModel>(await _userService.UserReferenceGetById(updateUser.Id));
                 return Ok(updateUserWithReference);
             }
@@ -156,7 +160,7 @@ namespace WebApi.Controllers
         public async Task<IActionResult> UserReferenceCreate([FromBody] UserReferenceModel model)
         {
             var user = _mapper.Map<UserReference>(model);
-            var result =await _userService.UserReferenceCreate(user);
+            var result = _mapper.Map <UserReferenceModel>(await _userService.UserReferenceCreate(user));
             return Ok(result);
         }
         [AllowAnonymous]
@@ -164,7 +168,7 @@ namespace WebApi.Controllers
         public async Task<IActionResult> UserReferenceUpdate([FromBody] UserReferenceModel model)
         {
             var user = _mapper.Map<UserReference>(model);
-            var result = await _userService.UserReferenceUpdate(user);
+            var result = _mapper.Map<UserReferenceModel>(await _userService.UserReferenceUpdate(user));
             return Ok(result);
         }
         [AllowAnonymous]
@@ -173,6 +177,14 @@ namespace WebApi.Controllers
         {
             var result = await _userService.UserReferenceGetById(userId);
             var user = _mapper.Map<UserReferenceModel>(result);
+            return Ok(user);
+        }
+        [AllowAnonymous]
+        [HttpGet("UserReferences")]
+        public async Task<IActionResult> UserReferences()
+        {
+            var result = await _userService.UserReferences();
+            var user = _mapper.Map<IList<UserReferenceModel>>(result);
             return Ok(user);
         }
 
@@ -192,7 +204,7 @@ namespace WebApi.Controllers
         public async Task<IActionResult> PositionCreate([FromBody] PositionModel model)
         {
             var position = _mapper.Map<Position>(model);
-            var result = await _userService.PositionCreate(position);
+            var result = _mapper.Map<PositionModel>(await _userService.PositionCreate(position));
             return Ok(result);
         }
         [AllowAnonymous]
@@ -200,7 +212,7 @@ namespace WebApi.Controllers
         public async Task<IActionResult> PositionUpdate([FromBody] PositionModel model)
         {
             var position = _mapper.Map<Position>(model);
-            var result = await _userService.PositionUpdate(position);
+            var result = _mapper.Map<PositionModel>(await _userService.PositionUpdate(position));
             return Ok(result);
         }
         [AllowAnonymous]
@@ -209,6 +221,14 @@ namespace WebApi.Controllers
         {
             var result = await _userService.PositionGetById(Id);
             var position = _mapper.Map<PositionModel>(result);
+            return Ok(position);
+        }
+        [AllowAnonymous]
+        [HttpGet("Positions")]
+        public async Task<IActionResult> Positions()
+        {
+            var result = await _userService.Positions();
+            var position = _mapper.Map<IList<PositionModel>>(result);
             return Ok(position);
         }
 
@@ -220,5 +240,6 @@ namespace WebApi.Controllers
             var result = await _userService.PositionRemove(Id);
             return Ok(new { status = result });
         }
+
     }
 }

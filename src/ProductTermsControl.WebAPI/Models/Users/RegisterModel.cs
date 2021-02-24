@@ -19,10 +19,6 @@ namespace ProductTermsControl.WebAPI.Models.Users
         public string Email { get; set; }
         public string Avatar { get; set; }
         public string MobileNumber { get; set; }
-        [Required]
-        public int MagazineBranchId { get; set; }
-        [Required]
-        public int PositionId { get; set; }
 
 
         public RegisterModel()
@@ -32,7 +28,7 @@ namespace ProductTermsControl.WebAPI.Models.Users
 
 
 
-        public RegisterModel(User user, UserReference userReference)
+        public RegisterModel(User user)
         {
 
             FirstName = user.FirstName;
@@ -41,8 +37,6 @@ namespace ProductTermsControl.WebAPI.Models.Users
             Email = user.Email;
             Avatar = user.Avatar;
             MobileNumber = user.MobileNumber;
-            MagazineBranchId = userReference.MagazineBranchId;
-            PositionId = userReference.PositionId;
         }
     }
 }
