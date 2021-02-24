@@ -52,6 +52,9 @@ namespace ProductTermsControl.WebAPI.Helpers
             CreateMap<UserModel, UserWithReference>();
             CreateMap<UserWithReference, UserModel>();
 
+            CreateMap<User, BranchUserModel>();
+            CreateMap<BranchUserModel, User>();
+
         }
     }
 }

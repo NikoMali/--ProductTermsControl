@@ -18,12 +18,14 @@ namespace ProductTermsControl.WebAPI
         {
             private readonly IWebHostEnvironment _env;
             private readonly IConfiguration _configuration;
+            private AppSettings settings;
 
             public Startup(IWebHostEnvironment env, IConfiguration configuration)
             {
                 _env = env;
                 _configuration = configuration;
-            }
+
+        }
 
             // This method gets called by the runtime. Use this method to add services to the container.
             public void ConfigureServices(IServiceCollection services)
@@ -45,8 +47,8 @@ namespace ProductTermsControl.WebAPI
                 services.Configure<AppSettings>(appSettingsSection);
 
                 // configure jwt authentication
-                var appSettings = appSettingsSection.Get<AppSettings>();
-                var key = Encoding.ASCII.GetBytes(appSettings.Secret);
+                settings = appSettingsSection.Get<AppSettings>();
+                var key = Encoding.ASCII.GetBytes(settings.Secret);
 
                 RegisterServices(services);
 
@@ -64,11 +66,12 @@ namespace ProductTermsControl.WebAPI
             // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
             public void Configure(IApplicationBuilder app, IWebHostEnvironment env, DataContext dataContext)
             {
-                // migrate any database changes on startup (includes initial db creation)
+            
+           
 
-                // global cors policy
-                app.UseCors(builder => builder
-                        .WithOrigins("http://localhost:4200", "http://161.97.167.22:8080")
+            // global cors policy
+            app.UseCors(builder => builder
+                        .WithOrigins(settings.AllowedHost)
                         .AllowAnyMethod()
                         .AllowAnyHeader()
                         .AllowCredentials()

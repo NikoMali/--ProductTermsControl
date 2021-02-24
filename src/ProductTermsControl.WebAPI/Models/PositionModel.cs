@@ -7,6 +7,7 @@ namespace ProductTermsControl.WebAPI.Models
 {
     public class PositionModel
     {
+        public int Id { get; set; }
         public string Name { get; set; }
         public bool IsActive { get; set; }
     }

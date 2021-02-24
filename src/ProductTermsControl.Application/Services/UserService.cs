@@ -19,8 +19,8 @@ namespace ProductTermsControl.Application.Services
         Task<User> Authenticate(string username, string password);
         Task<IEnumerable<User>> GetAll();
         Task<User> GetById(int id);
-        Task<User> Create(User user, UserReference userReference, string password);
-        Task<User> Update(User user, UserReference userReference, string password = null);
+        Task<User> Create(User user, string password);
+        Task<User> Update(User user, string password = null);
         Task<string> Delete(int id);
 
         Task<GetAllWithPaging<UserWithReference>> GetAllForPaging(int PageNumber, int PageSize);
@@ -29,11 +29,13 @@ namespace ProductTermsControl.Application.Services
         Task<UserReference> UserReferenceUpdate(UserReference userReference);
         Task<string> UserReferenceRemove(int userId);
         Task<UserReference> UserReferenceGetById(int userId);
+        Task<IEnumerable<UserReference>> UserReferences();
 
         Task<Position> PositionCreate(Position position);
         Task<Position> PositionUpdate(Position position);
         Task<string> PositionRemove(int Id);
         Task<Position> PositionGetById(int Id);
+        Task<IEnumerable<Position>> Positions();
     }
 
     public class UserService : IUserService
@@ -75,13 +77,12 @@ namespace ProductTermsControl.Application.Services
             return await _context.Users.FindAsync(id);
         }
 
-        public async Task<User> Create(User user, UserReference userReference, string password)
+        public async Task<User> Create(User user, string password)
         {
             // validation
             if (string.IsNullOrWhiteSpace(password))
                 throw new AppException("Password is required");
-            if(string.IsNullOrWhiteSpace(userReference.PositionId.ToString()))
-                throw new AppException("PositionId is required");
+            
 
 
             if (await _context.Users.AnyAsync(u=>u.Username == user.Username))
@@ -94,15 +95,13 @@ namespace ProductTermsControl.Application.Services
             user.PasswordSalt = passwordSalt;
             await _context.Users.AddAsync(user);
             await _context.SaveChangesAsync();
-            userReference.UserId = user.Id;
-            await _context.UserReferences.AddAsync(userReference);
-            await _context.SaveChangesAsync();
+          
 
 
             return user;
         }
 
-        public async Task<User> Update(User userParam,UserReference userReference ,string password = null)
+        public async Task<User> Update(User userParam,string password = null)
         {
             var user =await _context.Users.FindAsync(userParam.Id);
 
@@ -137,8 +136,7 @@ namespace ProductTermsControl.Application.Services
             }
 
             _context.Users.Update(user);
-            userReference.UserId = user.Id;
-            _context.UserReferences.Update(userReference);
+            
             await _context.SaveChangesAsync();
             return user;
 
@@ -213,6 +211,10 @@ namespace ProductTermsControl.Application.Services
         {
             return await _context.UserReferences.FindAsync(userId);
         }
+        public async Task<IEnumerable<UserReference>> UserReferences()
+        {
+            return await _context.UserReferences.ToListAsync();
+        }
 
         public async Task<GetAllWithPaging<UserWithReference>> GetAllForPaging(int PageNumber, int PageSize)
         {
@@ -263,6 +265,10 @@ namespace ProductTermsControl.Application.Services
         public async Task<Position> PositionGetById(int Id)
         {
             return await _context.Positions.FindAsync(Id);
+        }
+        public async Task<IEnumerable<Position>> Positions()
+        {
+            return await _context.Positions.ToListAsync();
         }
     }
 }

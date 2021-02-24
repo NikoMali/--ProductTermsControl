@@ -24,5 +24,20 @@ namespace ProductTermsControl.Domain.Entities
 
         public List<UserReference> UserReferences { get; set; }
         public List<ResponsiblePersonsForProduct> ResponsiblePersonsByProducts { get; set; }
+
+        public User() { }
+
+        public User(User user)
+        {
+            Id = user.Id;
+            FirstName = user.FirstName;
+            LastName = user.LastName;
+            Username = user.Username;
+            Email = user.Email;
+            Avatar = user.Avatar;
+            MobileNumber = user.MobileNumber;
+            CreateDate = user.CreateDate;
+            UpdateDate = user.UpdateDate;
+        }
     }
 }
