@@ -18,6 +18,7 @@ using ProductTermsControl.Application.Filter;
 using ProductTermsControl.Application.Paging.Helpers;
 using ProductTermsControl.Application.Paging.Services;
 using ProductTermsControl.WebAPI.Models;
+using Serilog;
 
 namespace WebApi.Controllers
 {
@@ -69,7 +70,7 @@ namespace WebApi.Controllers
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);
             var tokenString = tokenHandler.WriteToken(token);
-
+            Log.Information("User "+user.Username+" authenticated success");
             // return basic user info and authentication token
             return Ok(new
             {
