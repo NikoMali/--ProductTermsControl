@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using ProductTermsControl.Insfrastructure.Helpers;
 using ProductTermsControl.Insfrastructure.IntarfaceConnReposit;
 using ProductTermsControl.Insfrastructure.StartUpExtensions;
+using Serilog;
 using System;
 using System.Text;
 
@@ -31,12 +32,16 @@ namespace ProductTermsControl.WebAPI
             public void ConfigureServices(IServiceCollection services)
             {
                 // use sql server db in production and sqlite db in development
-                    services.AddDbContext<DataContext>();
-                
-            
+                services.AddDbContext<DataContext>();
 
-           
-                    
+                /*Log.Logger = new LoggerConfiguration()
+               .ReadFrom.Configuration(_configuration, "Serilog")
+               //.MinimumLevel.Error()
+               .WriteTo.MySQL(connectionString: _configuration.GetConnectionString("WebApiDatabase"))
+               .CreateLogger();*/
+                Serilogging.SerilogInitial(_configuration);
+
+
 
                 services.AddCors();
                 services.AddControllers();
