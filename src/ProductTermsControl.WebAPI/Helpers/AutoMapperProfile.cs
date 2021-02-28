@@ -27,6 +27,13 @@ namespace ProductTermsControl.WebAPI.Helpers
             CreateMap<Product, ProductModel>();
             CreateMap<ProductModel, Product>();
 
+            CreateMap<ProductToBranch, ProductToBranchModel>();
+            CreateMap<ProductToBranchModel, ProductToBranch>();
+
+            
+            CreateMap<ResponsiblePersonsForProduct, ResponsiblePersonsForProductModel>();
+            CreateMap<ResponsiblePersonsForProductModel, ResponsiblePersonsForProduct>();
+
             CreateMap<ResponsiblePersonsGroup, ResponsiblePersonsGroupModel>();
             CreateMap<ResponsiblePersonsGroupModel, ResponsiblePersonsGroup>();
 

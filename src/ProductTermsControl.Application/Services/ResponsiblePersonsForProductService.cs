@@ -1,60 +1,65 @@
-﻿using ProductTermsControl.Application.Helpers;
+﻿using Microsoft.EntityFrameworkCore;
+using ProductTermsControl.Application.ApplicationDbContext;
+using ProductTermsControl.Application.Helpers;
 using ProductTermsControl.Domain.Entities;
 using ProductTermsControl.Domain.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace ProductTermsControl.Application.Services
 {
-    public interface IResponsiblePersonsForProductService : IDisposable
+    public interface IResponsiblePersonsForProductService
     {
-        IEnumerable<ResponsiblePersonsForProduct> GetAll();
-        string Update(ResponsiblePersonsForProduct ResponsiblePersonsByProduct);
-        string Delete(int Id);
-        ResponsiblePersonsForProduct GetById(int Id);
-        string Create(IList<ResponsiblePersonsForProduct> ResponsiblePersonsByProduct);
+        Task<IEnumerable<ResponsiblePersonsForProduct>> GetAll();
+        Task<ResponsiblePersonsForProduct> Update(ResponsiblePersonsForProduct ResponsiblePersonsByProduct);
+        Task<string> Delete(int Id);
+        Task<ResponsiblePersonsForProduct> GetById(int Id);
+        Task<string> Create(IList<ResponsiblePersonsForProduct> ResponsiblePersonsByProduct);
     }
 
     public class ResponsiblePersonsForProductService : IResponsiblePersonsForProductService
     {
-        private readonly IResponsiblePersonsForProductRepository _ResponsiblePersonsByProductRepository;
+       
+        private readonly IApplicationDbContext _context;
 
-        public ResponsiblePersonsForProductService(IResponsiblePersonsForProductRepository ResponsiblePersonsByProductRepository)
+        public ResponsiblePersonsForProductService(IApplicationDbContext context)
         {
-            _ResponsiblePersonsByProductRepository = ResponsiblePersonsByProductRepository;
+            _context = context;
         }
-        public IEnumerable<ResponsiblePersonsForProduct> GetAll()
+        public async Task<IEnumerable<ResponsiblePersonsForProduct>> GetAll()
         {
-            return _ResponsiblePersonsByProductRepository.GetAll();
+            return await _context.ResponsiblePersonsForProducts.ToListAsync();
         }
 
-        public string Update(ResponsiblePersonsForProduct ResponsiblePersonsByProduct)
+        public async Task<ResponsiblePersonsForProduct> Update(ResponsiblePersonsForProduct ResponsiblePersonsByProduct)
         {
             try
             {
-                _ResponsiblePersonsByProductRepository.Update(ResponsiblePersonsByProduct);
-                _ResponsiblePersonsByProductRepository.SaveChanges();
-                return ResultStatus.SUCCESS;
+                _context.ResponsiblePersonsForProducts.Update(ResponsiblePersonsByProduct);
+                await _context.SaveChangesAsync();
+                return ResponsiblePersonsByProduct;
             }
             catch (Exception)
             {
-                return ResultStatus.FAILED;
+                throw new AppException(ResultStatus.FAILED);
             }
            
         }
 
-        public ResponsiblePersonsForProduct GetById(int Id) 
+        public async Task<ResponsiblePersonsForProduct> GetById(int Id) 
         {
-            return _ResponsiblePersonsByProductRepository.GetById(Id);
+            return await _context.ResponsiblePersonsForProducts.FindAsync(Id);
         }
 
-        public string Delete(int Id)
+        public async Task<string> Delete(int Id)
         {
             try
             {
-                _ResponsiblePersonsByProductRepository.Remove(Id);
-                _ResponsiblePersonsByProductRepository.SaveChanges();
+                _context.ResponsiblePersonsForProducts.Remove(await GetById(Id));
+                await _context.SaveChangesAsync();
                 return ResultStatus.SUCCESS;
             }
             catch (Exception)
@@ -63,16 +68,31 @@ namespace ProductTermsControl.Application.Services
             }
         }
 
-        public string Create(IList<ResponsiblePersonsForProduct> ResponsiblePersonsByProduct)
+        public async Task<string> Create(IList<ResponsiblePersonsForProduct> ResponsiblePersonsByProduct)
         {
-            _ResponsiblePersonsByProductRepository.AddRange(ResponsiblePersonsByProduct);
-            _ResponsiblePersonsByProductRepository.SaveChanges();
+            for (int i = 0; i < ResponsiblePersonsByProduct.Count; i++)
+            {
+                bool IsExist;
+                IsAlreadyAddUser(ResponsiblePersonsByProduct[i].UserId,out IsExist);
+                if (!IsExist)
+                {
+                    await _context.ResponsiblePersonsForProducts.AddAsync(ResponsiblePersonsByProduct[i]);
+                }
+                else
+                {
+                    throw new AppException("Already add user >>" + (_context.Users.FindAsync(ResponsiblePersonsByProduct[i].UserId).Result.Username));
+                }
+            }
+            await _context.SaveChangesAsync();
             return ResultStatus.SUCCESS;
         }
 
-        public void Dispose()
+        
+
+        private void IsAlreadyAddUser(int userId, out bool isExist)
         {
-            GC.SuppressFinalize(this);
+            //var k = _context.ResponsiblePersonsForProducts.SingleOrDefaultAsync(x => x.UserId == userId);
+            isExist = _context.ResponsiblePersonsForProducts.SingleOrDefault(x => x.UserId == userId) != null;
         }
     }
 }

@@ -9,5 +9,7 @@ namespace ProductTermsControl.WebAPI.Models
     {
         public ProductModel Product { get; set; }
         public ProductToBranchModel ProductToBranch { get; set; }
+        public bool IsWarning { get; set; }
+        public DateTime WarningTermDateBegin { get; set; }
     }
 }

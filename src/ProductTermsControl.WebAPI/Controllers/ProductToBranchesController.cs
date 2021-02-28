@@ -29,40 +29,64 @@ namespace ProductTermsControl.WebAPI.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetAll()
+        public async Task<IActionResult> GetAll()
         {
-            var ProductToBranchs = _ProductToBranchService.GetAll();
+            var ProductToBranchs =await _ProductToBranchService.GetAll();
             var model = _mapper.Map<IList<ProductToBranchModel>>(ProductToBranchs);
             return Ok(model);
         }
 
         [HttpGet("{Id}")]
-        public IActionResult GetById(int Id)
+        public async Task<IActionResult> GetById(int Id)
         {
-            var ProductToBranch = _ProductToBranchService.GetById(Id);
+            var ProductToBranch =await _ProductToBranchService.GetById(Id);
             var model = _mapper.Map<ProductToBranchModel>(ProductToBranch);
             return Ok(model);
         }
         [HttpPut]
-        public IActionResult Update([FromBody] ProductToBranchModel ProductToBranchModel)
+        public async Task<IActionResult> Update([FromBody] ProductToBranchModel ProductToBranchModel)
         {
             var model = _mapper.Map<ProductToBranch>(ProductToBranchModel);
-            var ProductToBranch = _ProductToBranchService.Update(model);
+            var ProductToBranch =await _ProductToBranchService.Update(model);
             return Ok(ProductToBranch);
         }
 
         [HttpDelete("{Id}")]
-        public IActionResult Delete(int Id)
+        public async Task<IActionResult> Delete(int Id)
         {
-            var ProductToBranchResult = _ProductToBranchService.Delete(Id);
-            return Ok(ProductToBranchResult);
+            var ProductToBranchResult =await _ProductToBranchService.Delete(Id);
+            return Ok(new { status = ProductToBranchResult });
         }
         [HttpPost]
-        public IActionResult Create([FromBody] IList<ProductToBranchModel> ProductToBranchModel)
+        public async Task<IActionResult> Create([FromBody] IList<ProductToBranchModel> ProductToBranchModel)
         {
             var model = _mapper.Map<IList<ProductToBranch>>(ProductToBranchModel);
-            var ProductToBranch = _ProductToBranchService.Create(model);
-            return Ok(ProductToBranch);
+            var ProductToBranch =await _ProductToBranchService.Create(model);
+            return Ok(new { status = ProductToBranch });
+        }
+
+        [HttpGet("{BranchId}/ProductsWithTerm")]
+        public async Task<IActionResult> GetAllProductByBranchId(int BranchId)
+        {
+            var ProductByBranchId =await _ProductToBranchService.GetAllProductByBranchId(BranchId);
+            var model = _mapper.Map<IList<ProductWithTermModel>>(ProductByBranchId);
+            return Ok(model);
+        }
+
+
+        [HttpGet("{BranchId}/ProductsWithTerm/{BranchProductId}")]
+        public async Task<IActionResult> GetProductViewTermByBranchId(int BranchId, int BranchProductId)
+        {
+            var ProductByBranchId = await _ProductToBranchService.GetProductViewTermByBranchId(BranchId, BranchProductId);
+            var model = _mapper.Map<ProductToBranchModel>(ProductByBranchId);
+            return Ok(model);
+        }
+        [HttpGet("{BranchId}/ProductsByResponsible/{UserId}")]
+        public async Task<IActionResult> ProductsByResponsible(int BranchId, int UserId)
+        {
+            var ProductByBranchId = await _ProductToBranchService.GetAllProductByBranchIdAndResponsibleId(BranchId, UserId);
+            var model = _mapper.Map<IList<ProductWithTermModel>>(ProductByBranchId);
+            return Ok(model);
         }
 
         //
