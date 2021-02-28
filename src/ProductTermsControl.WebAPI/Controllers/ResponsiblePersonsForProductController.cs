@@ -29,40 +29,40 @@ namespace ProductTermsControl.WebAPI.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetAll()
+        public async Task<IActionResult> GetAll()
         {
-            var ResponsiblePersonsForProducts = _ResponsiblePersonsForProductService.GetAll();
+            var ResponsiblePersonsForProducts =await _ResponsiblePersonsForProductService.GetAll();
             var model = _mapper.Map<IList<ResponsiblePersonsForProductModel>>(ResponsiblePersonsForProducts);
             return Ok(model);
         }
 
         [HttpGet("{Id}")]
-        public IActionResult GetById(int Id)
+        public async Task<IActionResult> GetById(int Id)
         {
-            var ResponsiblePersonsForProduct = _ResponsiblePersonsForProductService.GetById(Id);
+            var ResponsiblePersonsForProduct = await _ResponsiblePersonsForProductService.GetById(Id);
             var model = _mapper.Map<ResponsiblePersonsForProductModel>(ResponsiblePersonsForProduct);
             return Ok(model);
         }
         [HttpPut]
-        public IActionResult Update([FromBody] ResponsiblePersonsForProductModel ResponsiblePersonsForProductModel)
+        public async Task<IActionResult> Update([FromBody] ResponsiblePersonsForProductModel ResponsiblePersonsForProductModel)
         {
             var model = _mapper.Map<ResponsiblePersonsForProduct>(ResponsiblePersonsForProductModel);
-            var ResponsiblePersonsForProduct = _ResponsiblePersonsForProductService.Update(model);
+            var ResponsiblePersonsForProduct = await _ResponsiblePersonsForProductService.Update(model);
             return Ok(ResponsiblePersonsForProduct);
         }
 
         [HttpDelete("{Id}")]
-        public IActionResult Delete(int Id)
+        public async Task<IActionResult> Delete(int Id)
         {
-            var ResponsiblePersonsForProductResult = _ResponsiblePersonsForProductService.Delete(Id);
-            return Ok(ResponsiblePersonsForProductResult);
+            var ResponsiblePersonsForProductResult = await _ResponsiblePersonsForProductService.Delete(Id);
+            return Ok(new {status = ResponsiblePersonsForProductResult });
         }
         [HttpPost]
-        public IActionResult Create([FromBody] IList<ResponsiblePersonsForProductModel> ResponsiblePersonsForProductModel)
+        public async Task<IActionResult> Create([FromBody] IList<ResponsiblePersonsForProductModel> ResponsiblePersonsForProductModel)
         {
             var model = _mapper.Map<IList<ResponsiblePersonsForProduct>>(ResponsiblePersonsForProductModel);
-            var ResponsiblePersonsForProduct = _ResponsiblePersonsForProductService.Create(model);
-            return Ok(ResponsiblePersonsForProduct);
+            var ResponsiblePersonsForProduct =await _ResponsiblePersonsForProductService.Create(model);
+            return Ok(new { status = ResponsiblePersonsForProduct });
         }
 
         //

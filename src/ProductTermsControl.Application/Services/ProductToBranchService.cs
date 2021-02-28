@@ -1,4 +1,6 @@
-﻿using ProductTermsControl.Application.Helpers;
+﻿using Microsoft.EntityFrameworkCore;
+using ProductTermsControl.Application.ApplicationDbContext;
+using ProductTermsControl.Application.Helpers;
 using ProductTermsControl.Domain.Entities;
 using ProductTermsControl.Domain.HelperModel;
 using ProductTermsControl.Domain.Interfaces;
@@ -6,61 +8,61 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace ProductTermsControl.Application.Services
 {
-    public interface IProductToBranchService : IDisposable
+    public interface IProductToBranchService
     {
-        IEnumerable<ProductToBranch> GetAll();
-        string Update(ProductToBranch productToBranch);
-        string Delete(int Id);
-        ProductToBranch GetById(int Id);
-        string Create(IList<ProductToBranch> productToBranch);
-        IQueryable<ProductWithTerm> GetAllProductByBranchId(int branchId);
-        ProductToBranch GetProductViewTermByBranchId(int branchId, int productId);
-        IQueryable<ProductWithTerm> GetAllProductByBranchIdAndResponsibleId(int branchId, int userId);
+        Task<IEnumerable<ProductToBranch>> GetAll();
+        Task<ProductToBranch> Update(ProductToBranch productToBranch);
+        Task<string> Delete(int Id);
+        Task<ProductToBranch> GetById(int Id);
+        Task<string> Create(IList<ProductToBranch> productToBranch);
+        Task<IOrderedEnumerable<ProductWithTerm>> GetAllProductByBranchId(int branchId);
+        Task<ProductToBranch> GetProductViewTermByBranchId(int branchId, int productId);
+        Task<IOrderedEnumerable<ProductWithTerm>> GetAllProductByBranchIdAndResponsibleId(int branchId, int userId);
     }
 
     public class ProductToBranchService : IProductToBranchService
     {
-        private readonly IProductToBranchRepository _productToBranchRepository;
-        private readonly ICommonRepository _commonRepository;
+        private readonly IApplicationDbContext _context;
 
-        public ProductToBranchService(IProductToBranchRepository ProductToBranchRepository)
+        public ProductToBranchService(IApplicationDbContext context)
         {
-            _productToBranchRepository = ProductToBranchRepository;
+            _context = context;
         }
-        public IEnumerable<ProductToBranch> GetAll()
+        public async Task<IEnumerable<ProductToBranch>> GetAll()
         {
-            return _productToBranchRepository.GetAll();
+            return await _context.ProductToBranches.ToListAsync();
         }
 
-        public string Update(ProductToBranch productToBranch)
+        public async Task<ProductToBranch> Update(ProductToBranch productToBranch)
         {
             try
             {
-                _productToBranchRepository.Update(productToBranch);
-                _productToBranchRepository.SaveChanges();
-                return ResultStatus.SUCCESS;
+                _context.ProductToBranches.Update(productToBranch);
+                await _context.SaveChangesAsync();
+                return productToBranch;
             }
             catch (Exception)
             {
-                return ResultStatus.FAILED;
+                throw new AppException(ResultStatus.FAILED);
             }
            
         }
 
-        public ProductToBranch GetById(int Id) 
+        public async Task<ProductToBranch> GetById(int Id) 
         {
-            return _productToBranchRepository.GetById(Id);
+            return await _context.ProductToBranches.FindAsync(Id);
         }
 
-        public string Delete(int Id)
+        public async Task<string> Delete(int Id)
         {
             try
             {
-                _productToBranchRepository.Remove(Id);
-                _productToBranchRepository.SaveChanges();
+                _context.ProductToBranches.Remove(await GetById(Id));
+                await _context.SaveChangesAsync();
                 return ResultStatus.SUCCESS;
             }
             catch (Exception)
@@ -69,27 +71,49 @@ namespace ProductTermsControl.Application.Services
             }
         }
 
-        public string Create(IList<ProductToBranch> productToBranch)
+        public async Task<string> Create(IList<ProductToBranch> productToBranch)
         {
-            _productToBranchRepository.AddRange(productToBranch);
-            _productToBranchRepository.SaveChanges();
+            await _context.ProductToBranches.AddRangeAsync(productToBranch);
+            await _context.SaveChangesAsync();
             return ResultStatus.SUCCESS;
         }
-        public IQueryable<ProductWithTerm> GetAllProductByBranchId(int branchId)
+        public Task<IOrderedEnumerable<ProductWithTerm>> GetAllProductByBranchId(int branchId)
         {
-            return _commonRepository.GetAllProductByBranchId(branchId);
+            var GetProducts = _context.ProductToBranches.Join(
+                                                             _context.Products,
+                                                             PB => PB.ProductId,
+                                                             P => P.Id,
+                                                             (PB, P) => new ProductWithTerm(P, PB)
+                                                         )
+                                                         .AsEnumerable()
+                                                         .Where(pb => pb.ProductToBranch.MagazineBranchId == branchId)
+                                                         .OrderBy(r => r.WarningTermDateBegin);
+            return Task.FromResult(GetProducts);
         }
-        public ProductToBranch GetProductViewTermByBranchId(int branchId, int productId)
+        public async Task<ProductToBranch> GetProductViewTermByBranchId(int branchId, int productId)
         {
-            return _commonRepository.GetProductViewTermByBranchId(branchId, productId);
+            var GetProducts =await _context.ProductToBranches.Join(
+                                                            _context.Products,
+                                                            PB => PB.ProductId,
+                                                            P => P.Id,
+                                                            (PB, P) => new { ProductToBranch = PB, Product = P }
+                                                        )
+                                                        .Where(pb => pb.ProductToBranch.MagazineBranchId == branchId && pb.ProductToBranch.ProductId == productId)
+                                                        .FirstOrDefaultAsync();
+            return  GetProducts.ProductToBranch;
         }
-        public IQueryable<ProductWithTerm> GetAllProductByBranchIdAndResponsibleId(int branchId, int userId)
+        public Task<IOrderedEnumerable<ProductWithTerm>> GetAllProductByBranchIdAndResponsibleId(int branchId, int userId)
         {
-            return _commonRepository.GetAllProductByBranchIdAndResponsibleId(branchId, userId);
+            var GetProducts = (from PB in _context.ProductToBranches
+                              join P in _context.Products on PB.ProductId equals P.Id
+                              join RPG in _context.ResponsiblePersonsGroups on PB.ResponsiblePersonsGroupId equals RPG.Id
+                              join RPP in _context.ResponsiblePersonsForProducts on RPG.Id equals RPP.ResponsiblePersonsGroupId
+                              where PB.MagazineBranchId == branchId && RPP.UserId == userId
+                              select new ProductWithTerm(P,PB)).AsEnumerable();
+
+            return Task.FromResult(GetProducts.OrderBy(list => list.WarningTermDateBegin));
         }
-        public void Dispose()
-        {
-            GC.SuppressFinalize(this);
-        }
+       
+        
     }
 }
