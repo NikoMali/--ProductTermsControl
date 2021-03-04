@@ -2,7 +2,7 @@ using AutoMapper;
 using ProductTermsControl.Domain.Entities;
 using ProductTermsControl.Domain.HelperModel;
 using ProductTermsControl.WebAPI.Models;
-using ProductTermsControl.WebAPI.Models.Magazine;
+using ProductTermsControl.WebAPI.Models.Magaziness;
 using ProductTermsControl.WebAPI.Models.Users;
 
 namespace ProductTermsControl.WebAPI.Helpers
@@ -23,16 +23,24 @@ namespace ProductTermsControl.WebAPI.Helpers
 
             CreateMap<MagazineBranch, MagazineBranchModel>();
             CreateMap<MagazineBranchModel, MagazineBranch>();
+            CreateMap<MagazineBranch, MagazineBranchResponseModel>();
+            CreateMap<MagazineBranchResponseModel, MagazineBranch>();
 
             CreateMap<Product, ProductModel>();
             CreateMap<ProductModel, Product>();
+            CreateMap<Product, ProductResponseModel>();
+            CreateMap<ProductResponseModel, Product>();
 
             CreateMap<ProductToBranch, ProductToBranchModel>();
             CreateMap<ProductToBranchModel, ProductToBranch>();
+            CreateMap<ProductToBranch, ProductToBranchResponseModel>();
+            CreateMap<ProductToBranchResponseModel, ProductToBranch>();
 
-            
+
             CreateMap<ResponsiblePersonsForProduct, ResponsiblePersonsForProductModel>();
             CreateMap<ResponsiblePersonsForProductModel, ResponsiblePersonsForProduct>();
+            CreateMap<ResponsiblePersonsForProduct, ResponsiblePersonsForProductResponseModel>();
+            CreateMap<ResponsiblePersonsForProductResponseModel, ResponsiblePersonsForProduct>();
 
             CreateMap<ResponsiblePersonsGroup, ResponsiblePersonsGroupModel>();
             CreateMap<ResponsiblePersonsGroupModel, ResponsiblePersonsGroup>();
@@ -45,6 +53,9 @@ namespace ProductTermsControl.WebAPI.Helpers
 
             CreateMap<UserReference, UserReferenceModel>();
             CreateMap<UserReferenceModel, UserReference>();
+
+            CreateMap<UserReference, UserReferenceResponseModel>();
+            CreateMap<UserReferenceResponseModel, UserReference>();
 
             CreateMap<UserModel, UserReference>();
             CreateMap<UserReference, UserModel>();

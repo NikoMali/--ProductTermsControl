@@ -1,4 +1,4 @@
-namespace ProductTermsControl.WebAPI.Models.Magazine
+namespace ProductTermsControl.WebAPI.Models.Magaziness
 {
   public class MagazineModel
     {

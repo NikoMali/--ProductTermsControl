@@ -34,7 +34,14 @@ namespace ProductTermsControl.Application.Services
         }
         public async Task<IEnumerable<ProductToBranch>> GetAll()
         {
-            return await _context.ProductToBranches.ToListAsync();
+            return 
+                await (
+                from PTB in _context.ProductToBranches
+                join P in _context.Products on PTB.ProductId equals P.Id
+                join MB in _context.MagazineBranches on PTB.MagazineBranchId equals MB.Id
+                join RPG in _context.ResponsiblePersonsGroups on PTB.ResponsiblePersonsGroupId equals RPG.Id
+                select new ProductToBranch(PTB,P,MB,RPG)
+                ).ToListAsync();
         }
 
         public async Task<ProductToBranch> Update(ProductToBranch productToBranch)
@@ -54,7 +61,15 @@ namespace ProductTermsControl.Application.Services
 
         public async Task<ProductToBranch> GetById(int Id) 
         {
-            return await _context.ProductToBranches.FindAsync(Id);
+            return await
+                (
+                 from PTB in _context.ProductToBranches
+                 join P in _context.Products on PTB.ProductId equals P.Id
+                 join MB in _context.MagazineBranches on PTB.MagazineBranchId equals MB.Id
+                 join RPG in _context.ResponsiblePersonsGroups on PTB.ResponsiblePersonsGroupId equals RPG.Id
+                 where PTB.Id == Id
+                 select new ProductToBranch(PTB, P, MB, RPG)
+                ).FirstOrDefaultAsync();
         }
 
         public async Task<string> Delete(int Id)

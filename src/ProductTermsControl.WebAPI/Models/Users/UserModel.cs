@@ -18,10 +18,12 @@ namespace ProductTermsControl.WebAPI.Models.Users
         public int? PositionId { get; set; }
         public string? Position { get; set; }
 
+        public UserReferenceResponseModel userReferenceResponseModel { get; set; }
+
 
         public UserModel() { }
 
-        public UserModel(User user, UserReference userReference, IUserService _userService, IMagazineBranchService _magazineBranchService)
+        public UserModel(User user, UserReference userReference)
         {
             Id = user.Id;
             FirstName = user.FirstName;
@@ -33,12 +35,12 @@ namespace ProductTermsControl.WebAPI.Models.Users
             MagazineBranchId = userReference?.MagazineBranchId;
             if (MagazineBranchId != null)
             {
-                MagazineBranch = _magazineBranchService.GetById(userReference.MagazineBranchId).Result.Name;
+                MagazineBranch = userReference.MagazineBranchs.Name;
             }
             PositionId = userReference?.PositionId;
             if (PositionId != null)
             {
-                Position = _userService.PositionGetById(userReference.PositionId).Result.Name;
+                Position = userReference.Positions.Name;
             }
         }
     }

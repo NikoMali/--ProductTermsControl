@@ -32,7 +32,7 @@ namespace ProductTermsControl.WebAPI.Controllers
         public async Task<IActionResult> GetAll()
         {
             var ProductToBranchs =await _ProductToBranchService.GetAll();
-            var model = _mapper.Map<IList<ProductToBranchModel>>(ProductToBranchs);
+            var model = _mapper.Map<IList<ProductToBranchResponseModel>>(ProductToBranchs);
             return Ok(model);
         }
 
@@ -40,13 +40,17 @@ namespace ProductTermsControl.WebAPI.Controllers
         public async Task<IActionResult> GetById(int Id)
         {
             var ProductToBranch =await _ProductToBranchService.GetById(Id);
-            var model = _mapper.Map<ProductToBranchModel>(ProductToBranch);
+            var model = _mapper.Map<ProductToBranchResponseModel>(ProductToBranch);
             return Ok(model);
         }
         [HttpPut]
-        public async Task<IActionResult> Update([FromBody] ProductToBranchModel ProductToBranchModel)
+        public async Task<IActionResult> Update([FromBody] ProductToBranchModel productToBranchModel)
         {
-            var model = _mapper.Map<ProductToBranch>(ProductToBranchModel);
+            
+            productToBranchModel.ConvertMillisecondToDateTime(productToBranchModel.RegisterDate,nameof(productToBranchModel.RegisterDate));
+            productToBranchModel.ConvertMillisecondToDateTime(productToBranchModel.TermDate, nameof(productToBranchModel.TermDate));
+            
+            var model = _mapper.Map<ProductToBranch>(productToBranchModel);
             var ProductToBranch =await _ProductToBranchService.Update(model);
             return Ok(ProductToBranch);
         }
@@ -58,9 +62,16 @@ namespace ProductTermsControl.WebAPI.Controllers
             return Ok(new { status = ProductToBranchResult });
         }
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] IList<ProductToBranchModel> ProductToBranchModel)
+        public async Task<IActionResult> Create([FromBody] IList<ProductToBranchModel> productToBranchModel)
         {
-            var model = _mapper.Map<IList<ProductToBranch>>(ProductToBranchModel);
+            for (int i = 0; i < productToBranchModel.Count; i++)
+            {
+                
+                productToBranchModel[i].ConvertMillisecondToDateTime(productToBranchModel[i].RegisterDate, "RegisterDate");
+                productToBranchModel[i].ConvertMillisecondToDateTime(productToBranchModel[i].TermDate, "TermDate");
+            }
+            
+            var model = _mapper.Map<IList<ProductToBranch>>(productToBranchModel);
             var ProductToBranch =await _ProductToBranchService.Create(model);
             return Ok(new { status = ProductToBranch });
         }

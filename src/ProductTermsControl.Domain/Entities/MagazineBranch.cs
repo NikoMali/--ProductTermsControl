@@ -21,5 +21,19 @@ namespace ProductTermsControl.Domain.Entities
 
         public List<ProductToBranch> ProductToBranchs { get; set; }
         public List<UserReference> UserReferences { get; set; }
+
+        public MagazineBranch() { }
+
+        public MagazineBranch(MagazineBranch magazineBranch, Magazine magazine)
+        {
+            Id = magazineBranch.Id;
+            IdentificationCode = magazineBranch.IdentificationCode;
+            CreateDate = magazineBranch.CreateDate;
+            UpdateDate = magazineBranch.UpdateDate;
+            Name = magazineBranch.Name;
+            Location = magazineBranch.Location;
+            MagazineId = magazine.Id;
+            Magazine = magazine;
+        }
     }
 }

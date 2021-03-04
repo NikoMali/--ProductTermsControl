@@ -11,7 +11,7 @@ using ProductTermsControl.Application.Paging.Helpers;
 using ProductTermsControl.Application.Paging.Services;
 using ProductTermsControl.Application.Services;
 using ProductTermsControl.Domain.Entities;
-using ProductTermsControl.WebAPI.Models.Magazine;
+using ProductTermsControl.WebAPI.Models.Magaziness;
 
 namespace ProductTermsControl.WebAPI.Controllers
 {

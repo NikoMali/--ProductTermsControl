@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ProductTermsControl.Application.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -11,13 +12,13 @@ namespace ProductTermsControl.Application.Wrappers
         }
         public Response(T data)
         {
-            Succeeded = true;
+            status = ResultStatus.SUCCESS;
             Message = string.Empty;
             Errors = null;
             Data = data;
         }
         public T Data { get; set; }
-        public bool Succeeded { get; set; }
+        public string status { get; set; }
         public string[] Errors { get; set; }
         public string Message { get; set; }
     }

@@ -17,5 +17,17 @@ namespace ProductTermsControl.Domain.Entities
         public Company Company { get; set; }
 
         public List<ProductToBranch> ProductToBranchs { get; set; }
+
+        public Product() { }
+        public Product(Product product, Company company)
+        {
+            Id = product.Id;
+            Name = product.Name;
+            IdentificationCode = product.IdentificationCode;
+            CreateDate = product.CreateDate;
+            UpdateDate = product.UpdateDate;
+            CompanyId = company.Id;
+            Company = company;
+        }
     }
 }

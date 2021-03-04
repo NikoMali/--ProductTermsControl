@@ -32,7 +32,7 @@ namespace ProductTermsControl.WebAPI.Controllers
         public async Task<IActionResult> GetAll()
         {
             var ResponsiblePersonsForProducts =await _ResponsiblePersonsForProductService.GetAll();
-            var model = _mapper.Map<IList<ResponsiblePersonsForProductModel>>(ResponsiblePersonsForProducts);
+            var model = _mapper.Map<IList<ResponsiblePersonsForProductResponseModel>>(ResponsiblePersonsForProducts);
             return Ok(model);
         }
 
@@ -40,7 +40,7 @@ namespace ProductTermsControl.WebAPI.Controllers
         public async Task<IActionResult> GetById(int Id)
         {
             var ResponsiblePersonsForProduct = await _ResponsiblePersonsForProductService.GetById(Id);
-            var model = _mapper.Map<ResponsiblePersonsForProductModel>(ResponsiblePersonsForProduct);
+            var model = _mapper.Map<ResponsiblePersonsForProductResponseModel>(ResponsiblePersonsForProduct);
             return Ok(model);
         }
         [HttpPut]

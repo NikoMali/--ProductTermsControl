@@ -6,7 +6,7 @@ namespace ProductTermsControl.WebAPI.Models
   public class BranchUserModel
     {
         
-        public int Id { get; set; }
+       /* public int Id { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Username { get; set; }
@@ -29,7 +29,7 @@ namespace ProductTermsControl.WebAPI.Models
             MobileNumber = user.MobileNumber;
             PositionId = _userService.PositionGetById(_userService.UserReferenceGetById(user.Id).GetAwaiter().GetResult().PositionId).GetAwaiter().GetResult().Id;
             Position = _userService.PositionGetById(_userService.UserReferenceGetById(user.Id).GetAwaiter().GetResult().PositionId).GetAwaiter().GetResult().Name;
-        }
+        }*/
 
        
     }

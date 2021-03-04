@@ -113,7 +113,7 @@ namespace WebApi.Controllers
             var route = Request.Path.Value;
             var pageData = await _userService.GetAllForPaging(filter.PageNumber, filter.PageSize);
             var model = new List<UserModel>();
-            pageData.entities.ForEach(x => model.Add(new UserModel(x.user,x.userReference, _userService, _magazineBranchService)));
+            pageData.entities.ForEach(x => model.Add(new UserModel(x.user,x.userReference)));
             var pagedReponse = PaginationHelper.CreatePagedReponse<UserModel>(model, pageData.PaginationFilter, pageData.totalRecords, _uriService, route);
             return Ok(pagedReponse);
         }
@@ -123,7 +123,7 @@ namespace WebApi.Controllers
         {
             var user =await _userService.GetById(id);
             var userReference = await _userService.UserReferenceGetById(id);
-            var model =new UserModel(user, userReference, _userService, _magazineBranchService);
+            var model =new UserModel(user, userReference);
             //model = _mapper.Map<UserModel>(userReference);
             return Ok(model);
         }

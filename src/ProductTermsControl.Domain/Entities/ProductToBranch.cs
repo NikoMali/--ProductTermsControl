@@ -21,5 +21,22 @@ namespace ProductTermsControl.Domain.Entities
         public ResponsiblePersonsGroup ResponsiblePersonsGroup { get; set; }
         public int MagazineBranchId { get; set; }
         public MagazineBranch MagazineBranch { get; set; }
+
+        public ProductToBranch() { }
+        public ProductToBranch(ProductToBranch productToBranch, Product product, MagazineBranch magazineBranch, ResponsiblePersonsGroup responsiblePersonsGroup)
+        {
+            Id = productToBranch.Id;
+            RegisterDate = productToBranch.RegisterDate;
+            TermDate = productToBranch.TermDate;
+            DaysBeforeNotifiWarning = productToBranch.DaysBeforeNotifiWarning;
+            Quantity = productToBranch.Quantity;
+            ProductId = productToBranch.ProductId;
+            Product = product;
+            MagazineBranchId = productToBranch.MagazineBranchId;
+            MagazineBranch = magazineBranch;
+            ResponsiblePersonsGroupId = productToBranch.ResponsiblePersonsGroupId;
+            ResponsiblePersonsGroup = responsiblePersonsGroup;
+
+        }
     }
 }
