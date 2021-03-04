@@ -41,8 +41,8 @@ namespace ProductTermsControl.WebAPI.Controllers
             
             var route = Request.Path.Value;
             var pageData = await _ProductService.GetAllForPaging(filter.PageNumber, filter.PageSize);
-            var model = _mapper.Map<List<ProductModel>>(pageData.entities);
-            var pagedReponse = PaginationHelper.CreatePagedReponse<ProductModel>(model, pageData.PaginationFilter, pageData.totalRecords, _uriService, route);
+            var model = _mapper.Map<List<ProductResponseModel>>(pageData.entities);
+            var pagedReponse = PaginationHelper.CreatePagedReponse<ProductResponseModel>(model, pageData.PaginationFilter, pageData.totalRecords, _uriService, route);
             return Ok(pagedReponse);
         }
 
@@ -50,7 +50,7 @@ namespace ProductTermsControl.WebAPI.Controllers
         public async Task<IActionResult> GetById(int Id)
         {
             var Product =await _ProductService.GetById(Id);
-            var model = _mapper.Map<ProductModel>(Product);
+            var model = _mapper.Map<ProductResponseModel>(Product);
             return Ok(model);
         }
         [HttpPut]

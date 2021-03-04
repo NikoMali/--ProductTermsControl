@@ -31,7 +31,12 @@ namespace ProductTermsControl.Application.Services
         }
         public async Task<IEnumerable<ResponsiblePersonsForProduct>> GetAll()
         {
-            return await _context.ResponsiblePersonsForProducts.ToListAsync();
+            return await (
+                    from RPFP in _context.ResponsiblePersonsForProducts
+                    join RPG in _context.ResponsiblePersonsGroups on RPFP.ResponsiblePersonsGroupId equals RPG.Id
+                    join U in _context.Users on RPFP.UserId equals U.Id
+                    select new ResponsiblePersonsForProduct(RPFP,RPG,U)
+                ).ToListAsync();
         }
 
         public async Task<ResponsiblePersonsForProduct> Update(ResponsiblePersonsForProduct ResponsiblePersonsByProduct)
@@ -51,7 +56,13 @@ namespace ProductTermsControl.Application.Services
 
         public async Task<ResponsiblePersonsForProduct> GetById(int Id) 
         {
-            return await _context.ResponsiblePersonsForProducts.FindAsync(Id);
+            return await (
+                 from RPFP in _context.ResponsiblePersonsForProducts
+                 join RPG in _context.ResponsiblePersonsGroups on RPFP.ResponsiblePersonsGroupId equals RPG.Id
+                 join U in _context.Users on RPFP.UserId equals U.Id
+                 where RPFP.Id == Id
+                 select new ResponsiblePersonsForProduct(RPFP, RPG, U)
+                ).FirstOrDefaultAsync();
         }
 
         public async Task<string> Delete(int Id)
@@ -76,11 +87,12 @@ namespace ProductTermsControl.Application.Services
                 IsAlreadyAddUser(ResponsiblePersonsByProduct[i].UserId,out IsExist);
                 if (!IsExist)
                 {
+                    ResponsiblePersonsByProduct[i].RegisterDate = DateTime.Now;
                     await _context.ResponsiblePersonsForProducts.AddAsync(ResponsiblePersonsByProduct[i]);
                 }
                 else
                 {
-                    throw new AppException("Already add user >>" + (_context.Users.FindAsync(ResponsiblePersonsByProduct[i].UserId).Result.Username));
+                    throw new AppException("Already add user >> " + (_context.Users.FindAsync(ResponsiblePersonsByProduct[i].UserId).Result.Username));
                 }
             }
             await _context.SaveChangesAsync();

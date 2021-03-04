@@ -15,6 +15,22 @@ namespace ProductTermsControl.Domain.Entities
         public int UserId { get; set; }
         public User User { get; set; }
 
+        public ResponsiblePersonsForProduct() { }
+        public ResponsiblePersonsForProduct(ResponsiblePersonsForProduct responsiblePersonsForProduct, ResponsiblePersonsGroup responsiblePersonsGroup, User user)
+        {
+            Id = responsiblePersonsForProduct.Id;
+            RegisterDate = responsiblePersonsForProduct.RegisterDate;
+            ResponsiblePersonsGroupId = responsiblePersonsForProduct.ResponsiblePersonsGroupId;
+            ResponsiblePersonsGroup = responsiblePersonsGroup;
+            UserId = responsiblePersonsForProduct.UserId;
+            User = user;
+        }
+
+        public void Create(ResponsiblePersonsForProduct responsiblePersonsForProduct)
+        {
+            responsiblePersonsForProduct.RegisterDate = DateTime.Now;
+        }
+
 
     }
 }

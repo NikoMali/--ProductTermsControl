@@ -22,7 +22,7 @@ namespace ProductTermsControl.Application.Services
         Task<MagazineBranch> Create(MagazineBranch magazineBranch);
         Task<IEnumerable<MagazineBranch>> GetAllByMagazineId(int magazineId);
         Task<GetAllWithPaging<MagazineBranch>> GetAllForPaging(int PageNumber, int PageSize);
-        Task<IEnumerable<User>> GetUsersByBranchId(int branchId);
+        Task<IEnumerable<UserReference>> GetUsersByBranchId(int branchId);
     }
 
     public class MagazineBranchService : IMagazineBranchService
@@ -55,7 +55,11 @@ namespace ProductTermsControl.Application.Services
 
         public async Task<MagazineBranch> GetById(int Id) 
         {
-            return await _context.MagazineBranches.FindAsync(Id);
+            var result = from MB in _context.MagazineBranches
+                         join M in _context.Magazines on MB.MagazineId equals M.Id
+                         where MB.Id == Id
+                         select new MagazineBranch(MB, M);
+            return await result.FirstOrDefaultAsync();
         }
 
         public async Task<string> Delete(int Id)
@@ -89,7 +93,12 @@ namespace ProductTermsControl.Application.Services
 
             var validFilter = new PaginationFilter(PageNumber, PageSize);
             var totalRecords = _context.MagazineBranches.CountAsync();
-            var pagedData = await _context.MagazineBranches
+            var pagedData = await
+                (
+                    from MB in _context.MagazineBranches
+                    join M in _context.Magazines on MB.MagazineId equals M.Id
+                    select new MagazineBranch(MB,M)
+                 )
                 .Skip((validFilter.PageNumber - 1) * validFilter.PageSize)
                 .Take(validFilter.PageSize)
                 .ToListAsync();
@@ -98,12 +107,18 @@ namespace ProductTermsControl.Application.Services
             var result = new GetAllWithPaging<MagazineBranch>(validFilter, pagedData, await totalRecords);
             return result;
         }
-        public async Task<IEnumerable<User>> GetUsersByBranchId(int branchId)
+        public async Task<IEnumerable<UserReference>> GetUsersByBranchId(int branchId)
         {
-            var branchUsers =  (from UR in _context.UserReferences
-                               join U in _context.Users on UR.UserId equals U.Id
-                               where UR.MagazineBranchId == branchId
-                               select new User(U)).ToListAsync();
+            var branchUsers =  (
+                                   from UR in _context.UserReferences
+                                   join U in _context.Users on UR.UserId equals U.Id
+                                   join MB in _context.MagazineBranches on UR.MagazineBranchId equals MB.Id into UR_MB
+                                   from MB in UR_MB.DefaultIfEmpty()
+                                   join P in _context.Positions on UR.PositionId equals P.Id into UR_P
+                                   from P in UR_P.DefaultIfEmpty()
+                                   where UR.MagazineBranchId == branchId
+                                   select new UserReference(UR,U,MB,P)
+                               ).ToListAsync();
             return await branchUsers;
         }
     }

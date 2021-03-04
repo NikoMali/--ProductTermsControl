@@ -44,8 +44,10 @@ namespace ProductTermsControl.WebAPI
 
 
                 services.AddCors();
-                services.AddControllers();
-                services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+                services.AddControllers().AddNewtonsoftJson(options =>
+                    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+                );
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
                 // configure strongly typed settings objects
                 var appSettingsSection = _configuration.GetSection("AppSettings");

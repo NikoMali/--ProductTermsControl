@@ -19,6 +19,17 @@ namespace ProductTermsControl.Domain.Entities
         public int PositionId { get; set; }
         public Position Positions { get; set; }
 
+        public UserReference() { }
+        public UserReference(UserReference userReference, User user,MagazineBranch magazineBranch ,Position position)
+        {
+            UserId = userReference.UserId;
+            User = user;
 
+            MagazineBranchId = userReference.MagazineBranchId;
+            MagazineBranchs = magazineBranch;
+
+            PositionId = userReference.PositionId;
+            Positions = position;
+        }
     }
 }

@@ -53,8 +53,8 @@ namespace ProductTermsControl.WebAPI.Controllers
             return Ok(model);*/
             var route = Request.Path.Value;
             var pageData = await _MagazineBranchService.GetAllForPaging(filter.PageNumber, filter.PageSize);
-            var model = _mapper.Map<List<MagazineBranchModel>>(pageData.entities);
-            var pagedReponse = PaginationHelper.CreatePagedReponse<MagazineBranchModel>(model, pageData.PaginationFilter, pageData.totalRecords, _uriService, route);
+            var model = _mapper.Map<List<MagazineBranchResponseModel>>(pageData.entities);
+            var pagedReponse = PaginationHelper.CreatePagedReponse<MagazineBranchResponseModel>(model, pageData.PaginationFilter, pageData.totalRecords, _uriService, route);
             return Ok(pagedReponse);
         }
 
@@ -62,15 +62,16 @@ namespace ProductTermsControl.WebAPI.Controllers
         public async Task<IActionResult> GetById(int Id)
         {
             var MagazineBranch =await _MagazineBranchService.GetById(Id);
-            var model = _mapper.Map<MagazineBranchModel>(MagazineBranch);
+            var model = _mapper.Map<MagazineBranchResponseModel>(MagazineBranch);
             return Ok(model);
         }
         [HttpGet("{BranchId}/users")]
         public async Task<IActionResult> GetUsersByBranchId(int BranchId)
         {
             var users = await _MagazineBranchService.GetUsersByBranchId(BranchId);
-            var model = new List<BranchUserModel>();
-            users.ToList().ForEach(x => model.Add(new BranchUserModel(x, _userService)));
+            /*var model = new List<BranchUserModel>();
+            users.ToList().ForEach(x => model.Add(new BranchUserModel(x, _userService)));*/
+            var model = _mapper.Map<IList<UserReferenceResponseModel>>(users);
             return Ok(model);
         }
         [HttpPut]

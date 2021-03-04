@@ -209,7 +209,16 @@ namespace ProductTermsControl.Application.Services
 
         public async Task<UserReference> UserReferenceGetById(int userId)
         {
-            return await _context.UserReferences.FindAsync(userId);
+            var result = from UR in _context.UserReferences
+                         join U in _context.Users on UR.UserId equals U.Id
+                         join MB in _context.MagazineBranches on UR.MagazineBranchId equals MB.Id into UR_MB
+                         from MB in UR_MB.DefaultIfEmpty()
+                         join P in _context.Positions on UR.PositionId equals P.Id into UR_P
+                         from P in UR_P.DefaultIfEmpty()
+                         where UR.UserId == userId
+                         select new UserReference(UR, U, MB, P);
+
+            return await result.FirstOrDefaultAsync();
         }
         public async Task<IEnumerable<UserReference>> UserReferences()
         {
@@ -221,17 +230,33 @@ namespace ProductTermsControl.Application.Services
 
             var validFilter = new PaginationFilter(PageNumber, PageSize);
             var totalRecords = _context.Users.CountAsync();
-            var pagedData = await _context.Users
+            var pagedData = await
+                (
+                from U in _context.Users
+                join UR in _context.UserReferences on U.Id equals UR.UserId into U_UR
+                from UR in U_UR.DefaultIfEmpty()
+                join MB in _context.MagazineBranches on UR.MagazineBranchId equals MB.Id into UR_MB
+                from MB in UR_MB.DefaultIfEmpty()
+                join P in _context.Positions on UR.PositionId equals P.Id into UR_P
+                from P in UR_P.DefaultIfEmpty()
+                select new UserWithReference { user = U, userReference = new UserReference(UR, U, MB, P) }
+                )
+                /*var pagedData = await _context.Users
                 .GroupJoin(
                 _context.UserReferences,
-                U=>U.Id,
-                UR=>UR.UserId,
-                (U,UR) => new  { user =U , userReference = UR}
+                U => U.Id,
+                UR => UR.UserId,
+                (U, UR) => new { user = U, userReference = UR }
                 )
                 .SelectMany(
-                    xy=> xy.userReference.DefaultIfEmpty(),
-                    (x,y)=> new UserWithReference { user =x.user, userReference =y }
+                    xy => xy.userReference.DefaultIfEmpty(),
+                    (x, y) => new UserWithReference { user = x.user, userReference = y }
                  )
+                .Skip((validFilter.PageNumber - 1) * validFilter.PageSize)
+                .Take(validFilter.PageSize)
+                .ToListAsync();*/
+                //////////////////////
+               
                 .Skip((validFilter.PageNumber - 1) * validFilter.PageSize)
                 .Take(validFilter.PageSize)
                 .ToListAsync();

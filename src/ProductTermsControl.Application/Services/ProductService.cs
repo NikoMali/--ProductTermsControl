@@ -52,7 +52,11 @@ namespace ProductTermsControl.Application.Services
 
         public async Task<Product> GetById(int Id) 
         {
-            return await _context.Products.FindAsync(Id);
+            var result = from P in _context.Products
+                         join C in _context.Companys on P.CompanyId equals C.Id
+                         where P.Id == Id
+                         select new Product(P, C);
+            return await result.FirstOrDefaultAsync();
         }
 
         public async Task<string> Delete(int Id)
@@ -80,7 +84,12 @@ namespace ProductTermsControl.Application.Services
 
             var validFilter = new PaginationFilter(PageNumber, PageSize);
             var totalRecords = _context.Products.CountAsync();
-            var pagedData = await _context.Products
+            var pagedData = await 
+                (
+                    from P in _context.Products
+                    join C in _context.Companys on P.CompanyId equals C.Id
+                    select new Product(P,C)
+                )
                 .Skip((validFilter.PageNumber - 1) * validFilter.PageSize)
                 .Take(validFilter.PageSize)
                 .ToListAsync();

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ProductTermsControl.Application.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -21,7 +22,7 @@ namespace ProductTermsControl.Application.Wrappers
             this.PageSize = pageSize;
             this.Data = data;
             this.Message = null;
-            this.Succeeded = true;
+            this.status = ResultStatus.SUCCESS;
             this.Errors = null;
         }
     }

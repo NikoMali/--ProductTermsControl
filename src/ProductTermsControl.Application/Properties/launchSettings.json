@@ -1,0 +1,7 @@
+{
+  "profiles": {
+    "ProductTermsControl.Application": {
+      "commandName": "Snapshot Debugger"
+    }
+  }
+}
