@@ -100,6 +100,43 @@ namespace ProductTermsControl.WebAPI.Controllers
             return Ok(model);
         }
 
-        //
+        [HttpGet("OutOfStocks")]
+        public async Task<IActionResult> OutOfStocks()
+        {
+            var outOfStocks = await _ProductToBranchService.OutOfStocks();
+            var model = _mapper.Map<IList<BranchProductStockResponseModel>>(outOfStocks);
+            return Ok(model);
+        }
+        [HttpGet("OutOfStocks/{stockId}")]
+        public async Task<IActionResult> OutOfStock(int stockId)
+        {
+            var outOfStock = await _ProductToBranchService.OutOfStockById(stockId);
+            var model = _mapper.Map<BranchProductStockResponseModel>(outOfStock);
+            return Ok(model);
+        }
+        [HttpPost("OutOfStockCreate")]
+        public async Task<IActionResult> OutOfStockCreate(BranchProductStockModel branchProductStockModel)
+        {
+            var convertModel = _mapper.Map<BranchProductStock>(branchProductStockModel);
+            var outOfStock = await _ProductToBranchService.OutOfStockCreate(convertModel);
+            var model = _mapper.Map<BranchProductStockResponseModel>(outOfStock);
+            return Ok(model);
+        }
+        [HttpPut("OutOfStockUpdate")]
+        public async Task<IActionResult> OutOfStockUpdate(BranchProductStockModel branchProductStockModel)
+        {
+            var convertModel = _mapper.Map<BranchProductStock>(branchProductStockModel);
+            var outOfStock = await _ProductToBranchService.OutOfStockUpdate(convertModel);
+            var model = _mapper.Map<BranchProductStockResponseModel>(outOfStock);
+            return Ok(model);
+        }
+        [HttpDelete("OutOfStockRemove/{stockId}")]
+        public async Task<IActionResult> OutOfStockRemove(int stockId)
+        {
+            var outOfStock = await _ProductToBranchService.OutOfStockRemove(stockId);
+           
+            return Ok(new { status = outOfStock });
+        }
+
     }
 }

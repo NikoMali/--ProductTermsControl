@@ -22,13 +22,13 @@ namespace ProductTermsControl.Domain.Entities
         public UserReference() { }
         public UserReference(UserReference userReference, User user,MagazineBranch magazineBranch ,Position position)
         {
-            UserId = userReference.UserId;
+            UserId = userReference == null ? 0 : userReference.UserId;
             User = user;
 
-            MagazineBranchId = userReference.MagazineBranchId;
+            MagazineBranchId = userReference == null ? 0 : userReference.MagazineBranchId;
             MagazineBranchs = magazineBranch;
 
-            PositionId = userReference.PositionId;
+            PositionId = userReference == null ? 0 : userReference.PositionId;
             Positions = position;
         }
     }

@@ -22,6 +22,11 @@ namespace ProductTermsControl.Application.Services
         Task<IOrderedEnumerable<ProductWithTerm>> GetAllProductByBranchId(int branchId);
         Task<ProductToBranch> GetProductViewTermByBranchId(int branchId, int productId);
         Task<IOrderedEnumerable<ProductWithTerm>> GetAllProductByBranchIdAndResponsibleId(int branchId, int userId);
+        Task<IEnumerable<BranchProductStock>> OutOfStocks();
+        Task<BranchProductStock> OutOfStockUpdate(BranchProductStock productToBranch);
+        Task<string> OutOfStockRemove(int Id);
+        Task<BranchProductStock> OutOfStockById(int Id);
+        Task<BranchProductStock> OutOfStockCreate(BranchProductStock productToBranch);
     }
 
     public class ProductToBranchService : IProductToBranchService
@@ -128,7 +133,43 @@ namespace ProductTermsControl.Application.Services
 
             return Task.FromResult(GetProducts.OrderBy(list => list.WarningTermDateBegin));
         }
-       
-        
+
+        public async Task<IEnumerable<BranchProductStock>> OutOfStocks()
+        {
+            var GetStocks = (from BPS in _context.BranchProductStocks
+                            join PTB in _context.ProductToBranches on BPS.ProductToBranchId equals PTB.Id
+                            select new BranchProductStock(BPS, PTB)).ToListAsync();
+            return await GetStocks;
+        }
+        public async Task<BranchProductStock> OutOfStockUpdate(BranchProductStock productToBranch)
+        { 
+            _context.BranchProductStocks.Update(productToBranch);
+            await _context.SaveChangesAsync();
+            productToBranch.ProductToBranch = await GetById(productToBranch.ProductToBranchId);
+            return productToBranch;
+        }
+        public async Task<string> OutOfStockRemove(int Id)
+        {
+            _context.BranchProductStocks.Remove(await _context.BranchProductStocks.FindAsync(Id));
+            await _context.SaveChangesAsync();
+            return ResultStatus.SUCCESS;
+        }
+        public async Task<BranchProductStock> OutOfStockById(int Id)
+        {
+            var GetStocks = (from BPS in _context.BranchProductStocks
+                             join PTB in _context.ProductToBranches on BPS.ProductToBranchId equals PTB.Id
+                             where BPS.Id == Id
+                             select new BranchProductStock(BPS, PTB)).FirstOrDefaultAsync();
+            return await GetStocks;
+        }
+        public async Task<BranchProductStock> OutOfStockCreate(BranchProductStock productToBranch)
+        {
+            
+            await _context.BranchProductStocks.AddAsync(productToBranch);
+            await _context.SaveChangesAsync();
+            productToBranch.ProductToBranch =await GetById(productToBranch.ProductToBranchId);
+            return productToBranch;
+        }
+
     }
 }
