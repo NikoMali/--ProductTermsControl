@@ -20,6 +20,7 @@ namespace ProductTermsControl.Application.ApplicationDbContext
         public DbSet<ResponsiblePersonsGroup> ResponsiblePersonsGroups { get; set; }
         public DbSet<UserReference> UserReferences { get; set; }
         public DbSet<Position> Positions { get; set; }
+        public DbSet<BranchProductStock> BranchProductStocks { get; set; }
 
         Task<int> SaveChangesAsync();
     }

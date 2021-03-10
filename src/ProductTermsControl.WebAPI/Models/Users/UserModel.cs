@@ -18,7 +18,7 @@ namespace ProductTermsControl.WebAPI.Models.Users
         public int? PositionId { get; set; }
         public string? Position { get; set; }
 
-        public UserReferenceResponseModel userReferenceResponseModel { get; set; }
+        
 
 
         public UserModel() { }
@@ -33,12 +33,12 @@ namespace ProductTermsControl.WebAPI.Models.Users
             Avatar = user.Avatar;
             MobileNumber = user.MobileNumber;
             MagazineBranchId = userReference?.MagazineBranchId;
-            if (MagazineBranchId != null)
+            if (MagazineBranchId != null && MagazineBranchId != 0)
             {
                 MagazineBranch = userReference.MagazineBranchs.Name;
             }
             PositionId = userReference?.PositionId;
-            if (PositionId != null)
+            if (PositionId != null && PositionId != 0)
             {
                 Position = userReference.Positions.Name;
             }

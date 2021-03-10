@@ -22,6 +22,9 @@ namespace ProductTermsControl.Domain.Entities
         public int MagazineBranchId { get; set; }
         public MagazineBranch MagazineBranch { get; set; }
 
+        //refference 
+        public List<BranchProductStock> BranchProductStocks { get; set; }
+
         public ProductToBranch() { }
         public ProductToBranch(ProductToBranch productToBranch, Product product, MagazineBranch magazineBranch, ResponsiblePersonsGroup responsiblePersonsGroup)
         {
