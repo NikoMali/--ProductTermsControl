@@ -6,7 +6,7 @@ namespace ProductTermsControl.Domain
     // Using non-generic integer types for simplicity and to ease caching logic
     public abstract class BaseEntity
     {
-        public virtual int Id { get; protected set; }
+        public virtual int Id { get; set; }
         public virtual DateTime CreateDate { get; set; } 
         public virtual DateTime UpdateDate { get; set; }
     }

@@ -4,9 +4,9 @@ using System.Text;
 
 namespace ProductTermsControl.Domain.Entities
 {
-    public class ResponsiblePersonsForProduct
+    public class ResponsiblePersonsForProduct : BaseEntity
     {
-        public int Id { get; set; }
+       
         public DateTime RegisterDate { get; set; }
 
         //referencee

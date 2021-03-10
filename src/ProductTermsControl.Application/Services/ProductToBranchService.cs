@@ -45,6 +45,9 @@ namespace ProductTermsControl.Application.Services
                 join P in _context.Products on PTB.ProductId equals P.Id
                 join MB in _context.MagazineBranches on PTB.MagazineBranchId equals MB.Id
                 join RPG in _context.ResponsiblePersonsGroups on PTB.ResponsiblePersonsGroupId equals RPG.Id
+                join BPS in _context.BranchProductStocks on PTB.Id equals BPS.ProductToBranchId into BPS_PB
+                from BPS in BPS_PB.DefaultIfEmpty()
+                where (BPS == null || BPS.IsOutOfStock != true)
                 select new ProductToBranch(PTB,P,MB,RPG)
                 ).ToListAsync();
         }
@@ -99,16 +102,23 @@ namespace ProductTermsControl.Application.Services
         }
         public Task<IOrderedEnumerable<ProductWithTerm>> GetAllProductByBranchId(int branchId)
         {
-            var GetProducts = _context.ProductToBranches.Join(
-                                                             _context.Products,
-                                                             PB => PB.ProductId,
-                                                             P => P.Id,
-                                                             (PB, P) => new ProductWithTerm(P, PB)
-                                                         )
-                                                         .AsEnumerable()
-                                                         .Where(pb => pb.ProductToBranch.MagazineBranchId == branchId)
-                                                         .OrderBy(r => r.WarningTermDateBegin);
-            return Task.FromResult(GetProducts);
+            /* var GetProducts = _context.ProductToBranches.Join(
+                                                              _context.Products,
+                                                              PB => PB.ProductId,
+                                                              P => P.Id,
+                                                              (PB, P) => new ProductWithTerm(P, PB)
+                                                          )
+                                                          .AsEnumerable()
+                                                          .Where(pb => pb.ProductToBranch.MagazineBranchId == branchId)
+                                                          .OrderBy(r => r.WarningTermDateBegin);*/
+            var getProducts = (from PB in _context.ProductToBranches
+                              join P in _context.Products on PB.ProductId equals P.Id
+                              join BPS in _context.BranchProductStocks on PB.Id equals BPS.ProductToBranchId into BPS_PB
+                              from BPS in BPS_PB.DefaultIfEmpty()
+                              where PB.MagazineBranchId == branchId && (BPS == null || BPS.IsOutOfStock != true)
+                              select new ProductWithTerm(P, PB)).AsEnumerable();
+                              
+            return Task.FromResult(getProducts.OrderBy(r => r.WarningTermDateBegin));
         }
         public async Task<ProductToBranch> GetProductViewTermByBranchId(int branchId, int productId)
         {
@@ -128,6 +138,9 @@ namespace ProductTermsControl.Application.Services
                               join P in _context.Products on PB.ProductId equals P.Id
                               join RPG in _context.ResponsiblePersonsGroups on PB.ResponsiblePersonsGroupId equals RPG.Id
                               join RPP in _context.ResponsiblePersonsForProducts on RPG.Id equals RPP.ResponsiblePersonsGroupId
+                              join BPS in _context.BranchProductStocks on PB.Id equals BPS.ProductToBranchId into BPS_PB
+                              from BPS in BPS_PB.DefaultIfEmpty()
+                              where (BPS == null || BPS.IsOutOfStock != true)
                               where PB.MagazineBranchId == branchId && RPP.UserId == userId
                               select new ProductWithTerm(P,PB)).AsEnumerable();
 
