@@ -4,9 +4,9 @@ using System.Text;
 
 namespace ProductTermsControl.Domain.Entities
 {
-    public class ProductToBranch
+    public class ProductToBranch : BaseEntity
     {
-        public int Id { get; set; }
+       
         public DateTime RegisterDate { get; set; }
         public DateTime TermDate { get; set; }
         public int DaysBeforeNotifiWarning { get; set; }

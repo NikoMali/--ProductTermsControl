@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 namespace ProductTermsControl.Domain.Entities
 {
-    public class User
+    public class User : BaseEntity
     {
-        public int Id { get; set; }
+       
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Username { get; set; }
@@ -14,8 +14,7 @@ namespace ProductTermsControl.Domain.Entities
         public string MobileNumber { get; set; }
         public byte[] PasswordHash { get; set; }
         public byte[] PasswordSalt { get; set; }
-        public DateTime CreateDate { get; set; }
-        public DateTime UpdateDate { get; set; }
+        
 
 
 
