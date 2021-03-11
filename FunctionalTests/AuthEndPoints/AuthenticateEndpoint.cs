@@ -27,8 +27,7 @@ namespace FunctionalTests.AuthEndPoints
 
         [Theory]
         [InlineData("string", "string", true)]
-        [InlineData("demouser@microsoft.com", "badpassword", false)]
-        [InlineData("baduser@microsoft.com", "badpassword", false)]
+        
         public async Task ReturnsExpectedResultGivenCredentials(string testUsername, string testPassword, bool expectedResult)
         {
             var request = new AuthenticateModel()
