@@ -11,5 +11,7 @@ namespace ProductTermsControl.WebAPI.Models
         public bool IsOutOfStock { get; set; }
         public string OutOfStockReason { get; set; }
         public int ProductToBranchId { get; set; }
+        public int? ReasonForOutOfStockId { get; set; } 
+        public int? Quantity { get; set; }
     }
 }

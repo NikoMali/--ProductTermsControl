@@ -151,7 +151,9 @@ namespace ProductTermsControl.Application.Services
         {
             var GetStocks = (from BPS in _context.BranchProductStocks
                             join PTB in _context.ProductToBranches on BPS.ProductToBranchId equals PTB.Id
-                            select new BranchProductStock(BPS, PTB)).ToListAsync();
+                            join R in _context.ReasonForOutOfStocks on BPS.ReasonForOutOfStockId equals R.Id into BPS_R
+                            from R in BPS_R.DefaultIfEmpty()
+                            select new BranchProductStock(BPS, PTB, R)).ToListAsync();
             return await GetStocks;
         }
         public async Task<BranchProductStock> OutOfStockUpdate(BranchProductStock productToBranch)
@@ -171,8 +173,9 @@ namespace ProductTermsControl.Application.Services
         {
             var GetStocks = (from BPS in _context.BranchProductStocks
                              join PTB in _context.ProductToBranches on BPS.ProductToBranchId equals PTB.Id
+                             join R in _context.ReasonForOutOfStocks on BPS.ReasonForOutOfStockId equals R.Id
                              where BPS.Id == Id
-                             select new BranchProductStock(BPS, PTB)).FirstOrDefaultAsync();
+                             select new BranchProductStock(BPS, PTB,R)).FirstOrDefaultAsync();
             return await GetStocks;
         }
         public async Task<BranchProductStock> OutOfStockCreate(BranchProductStock productToBranch)

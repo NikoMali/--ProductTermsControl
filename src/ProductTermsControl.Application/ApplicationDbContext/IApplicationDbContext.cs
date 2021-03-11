@@ -21,6 +21,7 @@ namespace ProductTermsControl.Application.ApplicationDbContext
         public DbSet<UserReference> UserReferences { get; set; }
         public DbSet<Position> Positions { get; set; }
         public DbSet<BranchProductStock> BranchProductStocks { get; set; }
+        public DbSet<ReasonForOutOfStock> ReasonForOutOfStocks { get; set; }
 
         Task<int> SaveChangesAsync();
     }

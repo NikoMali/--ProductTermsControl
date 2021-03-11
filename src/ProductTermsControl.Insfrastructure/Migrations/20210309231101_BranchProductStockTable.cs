@@ -8,7 +8,7 @@ namespace ProductTermsControl.Insfrastructure.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.CreateTable(
+            /*migrationBuilder.CreateTable(
                 name: "BranchProductStocks",
                 columns: table => new
                 {
@@ -34,7 +34,7 @@ namespace ProductTermsControl.Insfrastructure.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_BranchProductStocks_ProductToBranchId",
                 table: "BranchProductStocks",
-                column: "ProductToBranchId");
+                column: "ProductToBranchId");*/
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

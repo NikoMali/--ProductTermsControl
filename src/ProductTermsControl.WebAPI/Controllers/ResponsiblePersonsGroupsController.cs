@@ -29,42 +29,42 @@ namespace ProductTermsControl.WebAPI.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetAll()
+        public async Task<IActionResult> GetAll()
         {
-            var ResponsiblePersonsGroupss = _ResponsiblePersonsGroupsService.GetAll();
+            var ResponsiblePersonsGroupss =await _ResponsiblePersonsGroupsService.GetAll();
             var model = _mapper.Map<IList<ResponsiblePersonsGroupModel>>(ResponsiblePersonsGroupss);
-            return Ok(model);
+            return Ok( model);
         }
 
         [HttpGet("{Id}")]
-        public IActionResult GetById(int Id)
+        public async Task<IActionResult> GetById(int Id)
         {
-            var ResponsiblePersonsGroups = _ResponsiblePersonsGroupsService.GetById(Id);
+            var ResponsiblePersonsGroups = await _ResponsiblePersonsGroupsService.GetById(Id);
             var model = _mapper.Map<ResponsiblePersonsGroupModel>(ResponsiblePersonsGroups);
             return Ok(model);
         }
         [HttpPut]
-        public IActionResult Update([FromBody] ResponsiblePersonsGroupModel ResponsiblePersonsGroupsModel)
+        public async Task<IActionResult> Update([FromBody] ResponsiblePersonsGroupModel ResponsiblePersonsGroupsModel)
         {
             var model = _mapper.Map<ResponsiblePersonsGroup>(ResponsiblePersonsGroupsModel);
-            var ResponsiblePersonsGroups = _ResponsiblePersonsGroupsService.Update(model);
-            return Ok(ResponsiblePersonsGroups);
+            var ResponsiblePersonsGroups = await _ResponsiblePersonsGroupsService.Update(model);
+            return Ok(new { status = ResponsiblePersonsGroups });
         }
 
         [HttpDelete("{Id}")]
-        public IActionResult Delete(int Id)
+        public async Task<IActionResult> Delete(int Id)
         {
-            var ResponsiblePersonsGroupsResult = _ResponsiblePersonsGroupsService.Delete(Id);
-            return Ok(ResponsiblePersonsGroupsResult);
+            var ResponsiblePersonsGroupsResult = await _ResponsiblePersonsGroupsService.Delete(Id);
+            return Ok(new { status = ResponsiblePersonsGroupsResult });
         }
         [HttpPost]
-        public IActionResult Create([FromBody] ResponsiblePersonsGroupModel ResponsiblePersonsGroupsModel)
+        public async Task<IActionResult> Create([FromBody] ResponsiblePersonsGroupModel ResponsiblePersonsGroupsModel)
         {
             var model = _mapper.Map<ResponsiblePersonsGroup>(ResponsiblePersonsGroupsModel);
             model.CreateDate = DateTime.Now;
             model.UpdateDate = DateTime.Now;
-            var ResponsiblePersonsGroups = _ResponsiblePersonsGroupsService.Create(model);
-            return Ok(ResponsiblePersonsGroups);
+            var ResponsiblePersonsGroups = await _ResponsiblePersonsGroupsService.Create(model);
+            return Ok(new { status = ResponsiblePersonsGroups });
         }
     }
 }

@@ -6,104 +6,57 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
+using System.Linq.Expressions;
 
 namespace ProductTermsControl.Insfrastructure.Repository
 {
-    public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
+    public class Repository<TEntity> : IRepository<TEntity>
+        where TEntity : class
+        
     {
-        protected readonly DataContext Db;
-        protected readonly DbSet<TEntity> DbSet;
-
+        private readonly DataContext context;
         public Repository(DataContext context)
         {
-            Db = context;
-            DbSet = Db.Set<TEntity>();
+            this.context = context;
+        }
+        public async Task<TEntity> Add(TEntity entity)
+        {
+            context.Set<TEntity>().Add(entity);
+            await context.SaveChangesAsync();
+            return entity;
         }
 
-        public virtual void Add(TEntity obj)
+        public async Task<TEntity> Delete(int id)
         {
-            DbSet.Add(obj);
-        }
-        public virtual void AddRange(IList<TEntity> obj)
-        {
-            DbSet.AddRange(obj);
-        }
+            var entity = await context.Set<TEntity>().FindAsync(id);
+            if (entity == null)
+            {
+                return entity;
+            }
 
-        public virtual TEntity GetById(int id)
-        {
-            return DbSet.Find(id);
-        }
+            context.Set<TEntity>().Remove(entity);
+            await context.SaveChangesAsync();
 
-        public virtual IQueryable<TEntity> GetAll()
-        {
-            return DbSet;
-        }
-        /*public virtual GetAllWithPaging<TEntity> GetAllFilter(int PageNumber, int PageSize)
-        {
-            var validFilter = new PaginationFilter(PageNumber, PageSize);
-            var pagedData = DbSet
-                .Skip((validFilter.PageNumber - 1) * validFilter.PageSize)
-                .Take(validFilter.PageSize)
-                .ToList();
-
-
-            var totalRecords = DbSet.Count();
-            var result = new GetAllWithPaging<TEntity>(validFilter, pagedData, totalRecords);
-            return result;
-
-        }*/
-
-        public virtual IQueryable<TEntity> GetAll(ISpecification<TEntity> spec)
-        {
-            return ApplySpecification(spec);
+            return entity;
         }
 
-        public virtual IQueryable<TEntity> GetAllSoftDeleted()
+        public async Task<TEntity> Get(int id)
         {
-            return DbSet.IgnoreQueryFilters()
-                .Where(e => EF.Property<bool>(e, "IsDeleted") == true);
+            return await context.Set<TEntity>().FindAsync(id);
         }
 
-        public virtual void Update(TEntity obj)
+        public async Task<List<TEntity>> GetAll()
         {
-            DbSet.Update(obj);
+            return await context.Set<TEntity>().ToListAsync();
         }
 
-        public virtual void Remove(int id)
+        public async Task<TEntity> Update(TEntity entity)
         {
-            DbSet.Remove(DbSet.Find(id));
+            context.Entry(entity).State = EntityState.Modified;
+            await context.SaveChangesAsync();
+            return entity;
         }
 
-        public int SaveChanges()
-        {
-            return Db.SaveChanges();
-        }
-
-        public void Dispose()
-        {
-            Db.Dispose();
-            GC.SuppressFinalize(this);
-        }
-
-        private IQueryable<TEntity> ApplySpecification(ISpecification<TEntity> spec)
-        {
-            return SpecificationEvaluator<TEntity>.GetQuery(DbSet.AsQueryable(), spec);
-        }
-
-        IQueryable<TEntity> IRepository<TEntity>.GetAll()
-        {
-            return DbSet;
-        }
-       
-
-        IQueryable<TEntity> IRepository<TEntity>.GetAll(ISpecification<TEntity> spec)
-        {
-            throw new NotImplementedException();
-        }
-
-        IQueryable<TEntity> IRepository<TEntity>.GetAllSoftDeleted()
-        {
-            throw new NotImplementedException();
-        }
     }
 }
