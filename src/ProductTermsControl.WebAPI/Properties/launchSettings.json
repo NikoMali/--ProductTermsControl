@@ -14,9 +14,9 @@
   "profiles": {
     "IIS Express": {
       "commandName": "IISExpress",
-      "commandLineArgs": "--environment PreProduction",
+      "commandLineArgs": "--environment Development",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "PreProduction"
+        "ASPNETCORE_ENVIRONMENT": "Development"
       },
       "use64Bit": true
     },

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using ProductTermsControl.Application.Services;
 using ProductTermsControl.Domain.Entities;
 using ProductTermsControl.Domain.Interfaces;
 using System;
@@ -27,9 +28,9 @@ namespace ProductTermsControl.Insfrastructure.StartUpExtensions
                 {
                     OnTokenValidated = context =>
                     {
-                        var userService = context.HttpContext.RequestServices.GetRequiredService< IRepository<User>> ();
+                        var userService = context.HttpContext.RequestServices.GetRequiredService< IUserService> ();
                         var userId = int.Parse(context.Principal.Identity.Name);
-                        var user = userService.Get(userId);
+                        var user = userService.GetById(userId);
                         if (user == null)
                         {
                                 // return unauthorized if user no longer exists
