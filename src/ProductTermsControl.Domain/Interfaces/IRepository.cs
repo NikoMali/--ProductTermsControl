@@ -1,20 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace ProductTermsControl.Domain.Interfaces
 {
-    public interface IRepository<TEntity> : IDisposable where TEntity : class
+    public interface IRepository<T> where T : class
     {
-        void Add(TEntity obj);
-        void AddRange(IList<TEntity> obj);
-        TEntity GetById(int id);
-        IQueryable<TEntity> GetAll();
-        IQueryable<TEntity> GetAll(ISpecification<TEntity> spec);
-        IQueryable<TEntity> GetAllSoftDeleted();
-        void Update(TEntity obj);
-        void Remove(int id);
-        int SaveChanges();
+
+        Task<List<T>> GetAll();
+        Task<T> Get(int id);
+        Task<T> Add(T entity);
+        Task<T> Update(T entity);
+        Task<T> Delete(int id);
     }
 }

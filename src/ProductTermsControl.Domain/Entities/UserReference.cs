@@ -13,10 +13,10 @@ namespace ProductTermsControl.Domain.Entities
         public User User { get; set; }
 
         //referencee
-        public int MagazineBranchId { get; set; }
+        public int? MagazineBranchId { get; set; }
         public MagazineBranch MagazineBranchs { get; set; }
 
-        public int PositionId { get; set; }
+        public int? PositionId { get; set; }
         public Position Positions { get; set; }
 
         public UserReference() { }

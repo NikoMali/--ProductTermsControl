@@ -1,40 +1,43 @@
-﻿using ProductTermsControl.Application.Helpers;
+﻿using Microsoft.EntityFrameworkCore;
+using ProductTermsControl.Application.ApplicationDbContext;
+using ProductTermsControl.Application.Helpers;
 using ProductTermsControl.Domain.Entities;
 using ProductTermsControl.Domain.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace ProductTermsControl.Application.Services
 {
-    public interface IResponsiblePersonsGroupService : IDisposable
+    public interface IResponsiblePersonsGroupService
     {
-        IEnumerable<ResponsiblePersonsGroup> GetAll();
-        string Update(ResponsiblePersonsGroup responsiblePersonsGroup);
-        string Delete(int Id);
-        ResponsiblePersonsGroup GetById(int Id);
-        string Create(ResponsiblePersonsGroup responsiblePersonsGroup);
+        Task<IEnumerable<ResponsiblePersonsGroup>> GetAll();
+        Task<string> Update(ResponsiblePersonsGroup responsiblePersonsGroup);
+        Task<string> Delete(int Id);
+        Task<ResponsiblePersonsGroup> GetById(int Id);
+        Task<string> Create(ResponsiblePersonsGroup responsiblePersonsGroup);
     }
 
     public class ResponsiblePersonsGroupService : IResponsiblePersonsGroupService
     {
-        private readonly IResponsiblePersonsGroupRepository _responsiblePersonsGroupRepository;
+        private readonly IApplicationDbContext _context;
 
-        public ResponsiblePersonsGroupService(IResponsiblePersonsGroupRepository responsiblePersonsGroupRepository)
+        public ResponsiblePersonsGroupService(IApplicationDbContext context)
         {
-            _responsiblePersonsGroupRepository = responsiblePersonsGroupRepository;
+            _context = context;
         }
-        public IEnumerable<ResponsiblePersonsGroup> GetAll()
+        public async Task<IEnumerable<ResponsiblePersonsGroup>> GetAll()
         {
-            return _responsiblePersonsGroupRepository.GetAll();
+            return await _context.ResponsiblePersonsGroups.ToListAsync();
         }
 
-        public string Update(ResponsiblePersonsGroup ResponsiblePersonsGroup)
+        public async Task<string> Update(ResponsiblePersonsGroup ResponsiblePersonsGroup)
         {
             try
             {
-                _responsiblePersonsGroupRepository.Update(ResponsiblePersonsGroup);
-                _responsiblePersonsGroupRepository.SaveChanges();
+                _context.ResponsiblePersonsGroups.Update(ResponsiblePersonsGroup);
+                await _context.SaveChangesAsync();
                 return ResultStatus.SUCCESS;
             }
             catch (Exception)
@@ -44,17 +47,17 @@ namespace ProductTermsControl.Application.Services
            
         }
 
-        public ResponsiblePersonsGroup GetById(int Id) 
+        public async Task<ResponsiblePersonsGroup> GetById(int Id) 
         {
-            return _responsiblePersonsGroupRepository.GetById(Id);
+            return await _context.ResponsiblePersonsGroups.FindAsync(Id);
         }
 
-        public string Delete(int Id)
+        public async Task<string> Delete(int Id)
         {
             try
             {
-                _responsiblePersonsGroupRepository.Remove(Id);
-                _responsiblePersonsGroupRepository.SaveChanges();
+                _context.ResponsiblePersonsGroups.Remove(await _context.ResponsiblePersonsGroups.FindAsync(Id));
+                await _context.SaveChangesAsync();
                 return ResultStatus.SUCCESS;
             }
             catch (Exception)
@@ -63,16 +66,13 @@ namespace ProductTermsControl.Application.Services
             }
         }
 
-        public string Create(ResponsiblePersonsGroup ResponsiblePersonsGroup)
+        public async Task<string> Create(ResponsiblePersonsGroup ResponsiblePersonsGroup)
         {
-            _responsiblePersonsGroupRepository.Add(ResponsiblePersonsGroup);
-            _responsiblePersonsGroupRepository.SaveChanges();
+            await _context.ResponsiblePersonsGroups.AddAsync(ResponsiblePersonsGroup);
+            await _context.SaveChangesAsync();
             return ResultStatus.SUCCESS;
         }
 
-        public void Dispose()
-        {
-            GC.SuppressFinalize(this);
-        }
+        
     }
 }

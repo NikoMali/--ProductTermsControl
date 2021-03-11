@@ -37,6 +37,9 @@ namespace ProductTermsControl.Insfrastructure.Helpers
         public DbSet<UserReference> UserReferences { get; set; }
         public DbSet<Position> Positions { get; set; }
         public DbSet<BranchProductStock> BranchProductStocks { get; set; }
+        public DbSet<ReasonForOutOfStock> ReasonForOutOfStocks { get; set; }
+
+
         public async Task<int> SaveChangesAsync()
         {
             var entries = ChangeTracker.Entries();

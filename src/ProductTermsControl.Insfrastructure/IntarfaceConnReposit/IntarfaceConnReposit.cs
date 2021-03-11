@@ -15,13 +15,7 @@ namespace ProductTermsControl.Insfrastructure.IntarfaceConnReposit
         public static void RegisterServices(IServiceCollection services)
         {
             //services.AddScoped<IRepository<UserReference>, Repository<UserReference>>();
-            services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-            services.AddScoped<IMagazineRepository, MagazineRepository>();
-            services.AddScoped<IProductRepository, ProductRepository>();
-            services.AddScoped<IResponsiblePersonsGroupRepository, ResponsiblePersonsGroupRepository>();
-            services.AddScoped<IResponsiblePersonsForProductRepository, ResponsiblePersonsForProductRepository>();
-            services.AddScoped<IProductToBranchRepository, ProductToBranchRepository>();
-            services.AddScoped<ICommonRepository, CommonRepository>();
+            services.AddScoped<IRepository<ReasonForOutOfStock>, Repository<ReasonForOutOfStock>>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IMagazineService, MagazineService>();
             services.AddScoped<IMagazineBranchService, MagazineBranchService>();

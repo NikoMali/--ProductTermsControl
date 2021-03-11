@@ -73,6 +73,12 @@ namespace ProductTermsControl.WebAPI.Helpers
             CreateMap<User, BranchUserModel>();
             CreateMap<BranchUserModel, User>();
 
+            CreateMap<ReasonForOutOfStock, ReasonForOutOfStockModel>();
+            CreateMap<ReasonForOutOfStockModel, ReasonForOutOfStock>();
+
+            CreateMap<ResponsiblePersonsGroup, ResponsiblePersonsGroupModel>();
+            CreateMap<ResponsiblePersonsGroupModel, ResponsiblePersonsGroup>();
+
             CreateMap<BranchProductStock, BranchProductStockModel>();
             CreateMap<BranchProductStockModel, BranchProductStock>();
             CreateMap<BranchProductStock, BranchProductStockResponseModel>();

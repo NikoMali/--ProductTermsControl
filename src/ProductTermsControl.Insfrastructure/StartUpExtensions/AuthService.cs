@@ -29,7 +29,7 @@ namespace ProductTermsControl.Insfrastructure.StartUpExtensions
                     {
                         var userService = context.HttpContext.RequestServices.GetRequiredService< IRepository<User>> ();
                         var userId = int.Parse(context.Principal.Identity.Name);
-                        var user = userService.GetById(userId);
+                        var user = userService.Get(userId);
                         if (user == null)
                         {
                                 // return unauthorized if user no longer exists
