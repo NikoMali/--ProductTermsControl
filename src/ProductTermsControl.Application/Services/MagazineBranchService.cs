@@ -23,6 +23,7 @@ namespace ProductTermsControl.Application.Services
         Task<IEnumerable<MagazineBranch>> GetAllByMagazineId(int magazineId);
         Task<GetAllWithPaging<MagazineBranch>> GetAllForPaging(int PageNumber, int PageSize);
         Task<IEnumerable<UserReference>> GetUsersByBranchId(int branchId);
+        Task<int> EmployeOfNumbers(int magazineBranchId);
     }
 
     public class MagazineBranchService : IMagazineBranchService
@@ -106,6 +107,10 @@ namespace ProductTermsControl.Application.Services
 
             var result = new GetAllWithPaging<MagazineBranch>(validFilter, pagedData, await totalRecords);
             return result;
+        }
+        public async Task<int> EmployeOfNumbers(int magazineBranchId)
+        {
+            return await _context.UserReferences.Where(x => x.MagazineBranchId == magazineBranchId).CountAsync();
         }
         public async Task<IEnumerable<UserReference>> GetUsersByBranchId(int branchId)
         {
