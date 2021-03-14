@@ -54,6 +54,10 @@ namespace ProductTermsControl.WebAPI.Controllers
             var route = Request.Path.Value;
             var pageData = await _MagazineBranchService.GetAllForPaging(filter.PageNumber, filter.PageSize);
             var model = _mapper.Map<List<MagazineBranchResponseModel>>(pageData.entities);
+            for (int i = 0; i < model.Count; i++)
+            {
+                model[i].NumberOfEmployeeUpdate(model[i], _MagazineBranchService);
+            }
             var pagedReponse = PaginationHelper.CreatePagedReponse<MagazineBranchResponseModel>(model, pageData.PaginationFilter, pageData.totalRecords, _uriService, route);
             return Ok(pagedReponse);
         }
@@ -63,6 +67,7 @@ namespace ProductTermsControl.WebAPI.Controllers
         {
             var MagazineBranch =await _MagazineBranchService.GetById(Id);
             var model = _mapper.Map<MagazineBranchResponseModel>(MagazineBranch);
+            model.NumberOfEmployeeUpdate(model, _MagazineBranchService);
             return Ok(model);
         }
         [HttpGet("{BranchId}/users")]

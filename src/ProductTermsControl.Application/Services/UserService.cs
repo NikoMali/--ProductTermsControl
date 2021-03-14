@@ -134,7 +134,7 @@ namespace ProductTermsControl.Application.Services
                 user.PasswordHash = passwordHash;
                 user.PasswordSalt = passwordSalt;
             }
-
+            user.UpdateOtherProperies(userParam);
             _context.Users.Update(user);
             
             await _context.SaveChangesAsync();

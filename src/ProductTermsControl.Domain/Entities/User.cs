@@ -35,8 +35,13 @@ namespace ProductTermsControl.Domain.Entities
             Email = user.Email;
             Avatar = user.Avatar;
             MobileNumber = user.MobileNumber;
-            CreateDate = user.CreateDate;
-            UpdateDate = user.UpdateDate;
+        }
+
+        public void UpdateOtherProperies(User user)
+        {
+            Email = user.Email;
+            Avatar = user.Avatar;
+            MobileNumber = user.MobileNumber;
         }
     }
 }
