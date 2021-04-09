@@ -47,8 +47,8 @@ namespace ProductTermsControl.WebAPI.Controllers
         public async Task<IActionResult> Update([FromBody] ResponsiblePersonsGroupModel ResponsiblePersonsGroupsModel)
         {
             var model = _mapper.Map<ResponsiblePersonsGroup>(ResponsiblePersonsGroupsModel);
-            var ResponsiblePersonsGroups = await _ResponsiblePersonsGroupsService.Update(model);
-            return Ok(new { status = ResponsiblePersonsGroups });
+            var responsiblePersonsGroups = _mapper.Map<ResponsiblePersonsGroupModel>(await _ResponsiblePersonsGroupsService.Update(model));
+            return Ok(responsiblePersonsGroups);
         }
 
         [HttpDelete("{Id}")]
@@ -64,7 +64,8 @@ namespace ProductTermsControl.WebAPI.Controllers
             model.CreateDate = DateTime.Now;
             model.UpdateDate = DateTime.Now;
             var ResponsiblePersonsGroups = await _ResponsiblePersonsGroupsService.Create(model);
-            return Ok(new { status = ResponsiblePersonsGroups });
+            var responsModel = _mapper.Map<ResponsiblePersonsGroupModel>(ResponsiblePersonsGroups);
+            return Ok(responsModel);
         }
     }
 }
