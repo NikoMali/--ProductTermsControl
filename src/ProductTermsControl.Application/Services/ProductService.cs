@@ -84,6 +84,10 @@ namespace ProductTermsControl.Application.Services
 
             var validFilter = new PaginationFilter(PageNumber, PageSize);
             var totalRecords = _context.Products.CountAsync();
+            if (PageSize == 0)
+            {
+                validFilter.PageSize = await totalRecords;
+            }
             var pagedData = await 
                 (
                     from P in _context.Products

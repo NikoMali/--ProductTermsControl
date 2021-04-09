@@ -81,6 +81,10 @@ namespace ProductTermsControl.Application.Services
 
             var validFilter = new PaginationFilter(PageNumber, PageSize);
             var totalRecords = _context.Companys.CountAsync();
+            if (PageSize == 0)
+            {
+                validFilter.PageSize = await totalRecords;
+            }
             var pagedData = await _context.Magazines
                 .Skip((validFilter.PageNumber - 1) * validFilter.PageSize)
                 .Take(validFilter.PageSize)

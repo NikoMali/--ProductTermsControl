@@ -13,10 +13,10 @@ namespace ProductTermsControl.Application.Services
     public interface IResponsiblePersonsGroupService
     {
         Task<IEnumerable<ResponsiblePersonsGroup>> GetAll();
-        Task<string> Update(ResponsiblePersonsGroup responsiblePersonsGroup);
+        Task<ResponsiblePersonsGroup> Update(ResponsiblePersonsGroup responsiblePersonsGroup);
         Task<string> Delete(int Id);
         Task<ResponsiblePersonsGroup> GetById(int Id);
-        Task<string> Create(ResponsiblePersonsGroup responsiblePersonsGroup);
+        Task<ResponsiblePersonsGroup> Create(ResponsiblePersonsGroup responsiblePersonsGroup);
     }
 
     public class ResponsiblePersonsGroupService : IResponsiblePersonsGroupService
@@ -32,18 +32,13 @@ namespace ProductTermsControl.Application.Services
             return await _context.ResponsiblePersonsGroups.ToListAsync();
         }
 
-        public async Task<string> Update(ResponsiblePersonsGroup ResponsiblePersonsGroup)
+        public async Task<ResponsiblePersonsGroup> Update(ResponsiblePersonsGroup responsiblePersonsGroup)
         {
-            try
-            {
-                _context.ResponsiblePersonsGroups.Update(ResponsiblePersonsGroup);
+            
+                _context.ResponsiblePersonsGroups.Update(responsiblePersonsGroup);
                 await _context.SaveChangesAsync();
-                return ResultStatus.SUCCESS;
-            }
-            catch (Exception)
-            {
-                return ResultStatus.FAILED;
-            }
+                return responsiblePersonsGroup;
+            
            
         }
 
@@ -66,11 +61,11 @@ namespace ProductTermsControl.Application.Services
             }
         }
 
-        public async Task<string> Create(ResponsiblePersonsGroup ResponsiblePersonsGroup)
+        public async Task<ResponsiblePersonsGroup> Create(ResponsiblePersonsGroup responsiblePersonsGroup)
         {
-            await _context.ResponsiblePersonsGroups.AddAsync(ResponsiblePersonsGroup);
+            await _context.ResponsiblePersonsGroups.AddAsync(responsiblePersonsGroup);
             await _context.SaveChangesAsync();
-            return ResultStatus.SUCCESS;
+            return responsiblePersonsGroup;
         }
 
         
