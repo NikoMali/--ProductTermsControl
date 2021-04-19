@@ -243,6 +243,7 @@ namespace ProductTermsControl.Application.Services
                 from MB in UR_MB.DefaultIfEmpty()
                 join P in _context.Positions on UR.PositionId equals P.Id into UR_P
                 from P in UR_P.DefaultIfEmpty()
+                orderby U.Id ascending
                 select new UserWithReference { user = U, userReference = new UserReference(UR, U, MB, P) }
                 )
                 /*var pagedData = await _context.Users

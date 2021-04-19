@@ -86,6 +86,7 @@ namespace ProductTermsControl.Application.Services
                 validFilter.PageSize = await totalRecords;
             }
             var pagedData = await _context.Magazines
+                .OrderBy(x=>x.Id)
                 .Skip((validFilter.PageNumber - 1) * validFilter.PageSize)
                 .Take(validFilter.PageSize)
                 .ToListAsync();

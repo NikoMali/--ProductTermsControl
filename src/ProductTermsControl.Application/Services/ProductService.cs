@@ -35,13 +35,14 @@ namespace ProductTermsControl.Application.Services
             return await _context.Products.ToListAsync();
         }
 
-        public async Task<Product> Update(Product Product)
+        public async Task<Product> Update(Product product)
         {
             try
             {
-                _context.Products.Update(Product);
+                _context.Products.Update(product);
                 await _context.SaveChangesAsync();
-                return Product;
+                product.Company = await _context.Companys.FindAsync(product.CompanyId);
+                return product;
             }
             catch (Exception)
             {
@@ -73,11 +74,12 @@ namespace ProductTermsControl.Application.Services
             }
         }
 
-        public async Task<Product> Create(Product Product)
+        public async Task<Product> Create(Product product)
         {
-            await _context.Products.AddAsync(Product);
+            await _context.Products.AddAsync(product);
             await _context.SaveChangesAsync();
-            return Product;
+            product.Company = await _context.Companys.FindAsync(product.CompanyId);
+            return product;
         }
         public async Task<GetAllWithPaging<Product>> GetAllForPaging(int PageNumber, int PageSize)
         {
@@ -88,17 +90,18 @@ namespace ProductTermsControl.Application.Services
             {
                 validFilter.PageSize = await totalRecords;
             }
-            var pagedData = await 
+            var pagedData = await
                 (
-                    from P in _context.Products
-                    join C in _context.Companys on P.CompanyId equals C.Id
-                    select new Product(P,C)
+                    from P in _context.Products.AsQueryable()
+                    join C in _context.Companys.AsQueryable() on P.CompanyId equals C.Id
+                    orderby P.Id descending
+                    select new Product(P, C)
                 )
                 .Skip((validFilter.PageNumber - 1) * validFilter.PageSize)
                 .Take(validFilter.PageSize)
                 .ToListAsync();
 
-
+           // pagedData.OrderBy(x => x.Id);
             var result = new GetAllWithPaging<Product>(validFilter, pagedData, await totalRecords);
             return result;
         }

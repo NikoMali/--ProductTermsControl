@@ -57,8 +57,9 @@ namespace ProductTermsControl.WebAPI.Controllers
         public async Task<IActionResult> Update([FromBody] ProductModel ProductModel)
         {
             var model = _mapper.Map<Product>(ProductModel);
-            var Product =await _ProductService.Update(model);
-            return Ok(Product);
+            var product =await _ProductService.Update(model);
+            var modelResponse = _mapper.Map<ProductResponseModel>(product);
+            return Ok(modelResponse);
         }
 
         [HttpDelete("{Id}")]
@@ -74,7 +75,8 @@ namespace ProductTermsControl.WebAPI.Controllers
             model.CreateDate = DateTime.Now;
             model.UpdateDate = DateTime.Now;
             var Product =await _ProductService.Create(model);
-            return Ok(Product);
+            var modelResponse = _mapper.Map<ProductResponseModel>(Product);
+            return Ok(modelResponse);
         }
     }
 }

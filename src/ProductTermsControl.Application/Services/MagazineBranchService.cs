@@ -102,6 +102,7 @@ namespace ProductTermsControl.Application.Services
                 (
                     from MB in _context.MagazineBranches
                     join M in _context.Magazines on MB.MagazineId equals M.Id
+                    orderby MB.Id ascending
                     select new MagazineBranch(MB,M)
                  )
                 .Skip((validFilter.PageNumber - 1) * validFilter.PageSize)
