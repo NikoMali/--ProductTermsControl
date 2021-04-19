@@ -57,7 +57,7 @@ namespace ProductTermsControl.Application.Services
         public async Task<ResponsiblePersonsForProduct> GetById(int Id) 
         {
             return await (
-                 from RPFP in _context.ResponsiblePersonsForProducts
+                 from RPFP in _context.ResponsiblePersonsForProducts.AsNoTracking()
                  join RPG in _context.ResponsiblePersonsGroups on RPFP.ResponsiblePersonsGroupId equals RPG.Id
                  join U in _context.Users on RPFP.UserId equals U.Id
                  where RPFP.Id == Id
@@ -67,16 +67,11 @@ namespace ProductTermsControl.Application.Services
 
         public async Task<string> Delete(int Id)
         {
-            try
-            {
-                _context.ResponsiblePersonsForProducts.Remove(await GetById(Id));
-                await _context.SaveChangesAsync();
-                return ResultStatus.SUCCESS;
-            }
-            catch (Exception)
-            {
-                return ResultStatus.FAILED;
-            }
+            var getResponsible = await GetById(Id);
+            _context.ResponsiblePersonsForProducts.Remove(getResponsible);
+            await _context.SaveChangesAsync();
+            return ResultStatus.SUCCESS;
+            
         }
 
         public async Task<string> Create(IList<ResponsiblePersonsForProduct> ResponsiblePersonsByProduct)
