@@ -67,5 +67,13 @@ namespace ProductTermsControl.WebAPI.Controllers
             var responsModel = _mapper.Map<ResponsiblePersonsGroupModel>(ResponsiblePersonsGroups);
             return Ok(responsModel);
         }
+
+        [HttpGet("CurrentUseOfSection")]
+        public async Task<IActionResult> CurrentUseOfSection()
+        {
+            var sectionFullInfo = await _ResponsiblePersonsGroupsService.SectionWithUsersAndProducts();
+            var model = _mapper.Map<List<SectionWithUsersAndProductsModel>>(sectionFullInfo);
+            return Ok(model);
+        }
     }
 }

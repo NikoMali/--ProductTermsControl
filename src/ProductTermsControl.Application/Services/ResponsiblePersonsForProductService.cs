@@ -2,11 +2,9 @@
 using ProductTermsControl.Application.ApplicationDbContext;
 using ProductTermsControl.Application.Helpers;
 using ProductTermsControl.Domain.Entities;
-using ProductTermsControl.Domain.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace ProductTermsControl.Application.Services
@@ -32,7 +30,7 @@ namespace ProductTermsControl.Application.Services
         public async Task<IEnumerable<ResponsiblePersonsForProduct>> GetAll()
         {
             return await (
-                    from RPFP in _context.ResponsiblePersonsForProducts
+                    from RPFP in _context.ResponsiblePersonsForProducts.AsNoTracking()
                     join RPG in _context.ResponsiblePersonsGroups on RPFP.ResponsiblePersonsGroupId equals RPG.Id
                     join U in _context.Users on RPFP.UserId equals U.Id
                     select new ResponsiblePersonsForProduct(RPFP,RPG,U)
@@ -101,5 +99,7 @@ namespace ProductTermsControl.Application.Services
             //var k = _context.ResponsiblePersonsForProducts.SingleOrDefaultAsync(x => x.UserId == userId);
             isExist = _context.ResponsiblePersonsForProducts.SingleOrDefault(x => x.UserId == userId) != null;
         }
+
+      
     }
 }
