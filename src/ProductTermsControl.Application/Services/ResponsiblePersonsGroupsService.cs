@@ -2,11 +2,11 @@
 using ProductTermsControl.Application.ApplicationDbContext;
 using ProductTermsControl.Application.Helpers;
 using ProductTermsControl.Domain.Entities;
-using ProductTermsControl.Domain.Interfaces;
+using ProductTermsControl.Domain.HelperModel;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace ProductTermsControl.Application.Services
 {
@@ -17,6 +17,7 @@ namespace ProductTermsControl.Application.Services
         Task<string> Delete(int Id);
         Task<ResponsiblePersonsGroup> GetById(int Id);
         Task<ResponsiblePersonsGroup> Create(ResponsiblePersonsGroup responsiblePersonsGroup);
+        Task<List<SectionWithUsersAndProducts>> SectionWithUsersAndProducts();
     }
 
     public class ResponsiblePersonsGroupService : IResponsiblePersonsGroupService
@@ -68,6 +69,30 @@ namespace ProductTermsControl.Application.Services
             return responsiblePersonsGroup;
         }
 
-        
+        public async Task<List<SectionWithUsersAndProducts>> SectionWithUsersAndProducts()
+        {
+            var result = new List<SectionWithUsersAndProducts>();
+            var getSections = await _context.ResponsiblePersonsGroups.ToListAsync();
+
+            for (int i = 0; i < getSections.Count; i++)
+            {
+                
+                var getUsers = await (from RPG in _context.ResponsiblePersonsGroups
+                                      join RPFP in _context.ResponsiblePersonsForProducts on RPG.Id equals RPFP.ResponsiblePersonsGroupId
+                                      join U in _context.Users on RPFP.UserId equals U.Id
+                                      where RPG.Id == getSections[i].Id
+                                      select new User(U)).ToListAsync();
+
+                var getProducts = await (from RPG in _context.ResponsiblePersonsGroups
+                                         join PB in _context.ProductToBranches on RPG.Id equals PB.ResponsiblePersonsGroupId
+                                         join P in _context.Products on PB.ProductId equals P.Id
+                                         join C in _context.Companys on P.CompanyId equals C.Id
+                                         where RPG.Id == getSections[i].Id
+                                         select new Product(P, C)).ToListAsync();
+
+                result.Add(new SectionWithUsersAndProducts(getSections[i], getUsers, getProducts));
+            }
+            return result;
+        }
     }
 }
