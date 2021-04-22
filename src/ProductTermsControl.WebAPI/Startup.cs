@@ -44,7 +44,10 @@ namespace ProductTermsControl.WebAPI
 
 
                 services.AddCors();
-                services.AddControllers().AddNewtonsoftJson(options =>
+                services.AddControllers(options => {
+                    options.Filters.Add(typeof(UserActivityFilter));
+                })
+                .AddNewtonsoftJson(options =>
                     options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
                 );
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
