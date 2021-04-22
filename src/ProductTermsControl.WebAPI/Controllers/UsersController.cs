@@ -19,6 +19,7 @@ using ProductTermsControl.Application.Paging.Helpers;
 using ProductTermsControl.Application.Paging.Services;
 using ProductTermsControl.WebAPI.Models;
 using Serilog;
+using ProductTermsControl.Insfrastructure.Enums;
 
 namespace WebApi.Controllers
 {
@@ -47,7 +48,7 @@ namespace WebApi.Controllers
             _uriService = uriService;
             _magazineBranchService = magazineBranchService;
         }
-
+        [DescriptionUserActivity(UserActivityType.Get)]
         [AllowAnonymous]
         [HttpPost("authenticate")]
         public async Task<IActionResult> Authenticate([FromBody]AuthenticateModel model)
@@ -81,7 +82,7 @@ namespace WebApi.Controllers
                 Token = tokenString
             });
         }
-
+        [DescriptionUserActivity(UserActivityType.Create)]
         [AllowAnonymous]
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody]RegisterModel model)
@@ -103,6 +104,8 @@ namespace WebApi.Controllers
                 return BadRequest(new { message = ex.Message });
             }
         }
+        //[TypeFilter(typeof(UserActivityFilter))]
+        [DescriptionUserActivity(UserActivityType.Get)]
         [AllowAnonymous]    
         [HttpGet]
         public async Task<IActionResult> GetAll([FromQuery] PaginationFilter filter)
@@ -117,7 +120,7 @@ namespace WebApi.Controllers
             var pagedReponse = PaginationHelper.CreatePagedReponse<UserModel>(model, pageData.PaginationFilter, pageData.totalRecords, _uriService, route);
             return Ok(pagedReponse);
         }
-
+        [DescriptionUserActivity(UserActivityType.Get)]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
@@ -127,7 +130,7 @@ namespace WebApi.Controllers
             //model = _mapper.Map<UserModel>(userReference);
             return Ok(model);
         }
-
+        [DescriptionUserActivity(UserActivityType.Update)]
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody]UpdateModel model)
         {
@@ -149,7 +152,7 @@ namespace WebApi.Controllers
                 return BadRequest(new { message = ex.Message });
             }
         }
-
+        [DescriptionUserActivity(UserActivityType.Delete)]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
