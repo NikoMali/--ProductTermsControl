@@ -22,6 +22,7 @@ namespace ProductTermsControl.Application.ApplicationDbContext
         public DbSet<Position> Positions { get; set; }
         public DbSet<BranchProductStock> BranchProductStocks { get; set; }
         public DbSet<ReasonForOutOfStock> ReasonForOutOfStocks { get; set; }
+        public DbSet<UserActivity> UserActivities { get; set; }
 
         Task<int> SaveChangesAsync();
     }

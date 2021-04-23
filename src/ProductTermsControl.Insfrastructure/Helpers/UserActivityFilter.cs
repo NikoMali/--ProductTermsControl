@@ -25,8 +25,19 @@ namespace ProductTermsControl.Insfrastructure.Helpers
             var routeData = context.RouteData;
             var controller = routeData.Values["controller"];
             var action = routeData.Values["action"];
-
             var url = $"{controller}/{action}";
+            var user = context.HttpContext.User.Identity.Name;
+            var isValidDesc = true;
+
+            if (user == null || 
+                url.ToUpper() == ("Users/authenticate").ToUpper() || 
+                url.ToUpper() == ("Users/register").ToUpper() ||
+                url.ToUpper().Contains(("Users/UserActivity").ToUpper())
+                )
+            {
+
+                isValidDesc = false;
+            }
 
             if (!string.IsNullOrEmpty(context.HttpContext.Request.QueryString.Value))
             {
@@ -42,24 +53,26 @@ namespace ProductTermsControl.Insfrastructure.Helpers
                 data = convertedValue;
             }
 
-            var user = context.HttpContext.User.Identity.Name;
 
             var ipAddress = context.HttpContext.Connection.RemoteIpAddress.ToString();
 
 
             var result = await next.Invoke();
-            var convertedResult = JsonConvert.SerializeObject(result.Result);
-            string actDesc = context.HttpContext.Response.Headers.FirstOrDefault(x => x.Key == "ActionDescription").Value.FirstOrDefault();
             
-            await SaveUserActivity(data, url, user, ipAddress,convertedResult, actDesc);
+            if (isValidDesc)
+            {
+                var convertedResult = JsonConvert.SerializeObject(result.Result);
+                string actDesc = context.HttpContext.Response.Headers.FirstOrDefault(x => x.Key == "ActionDescription").Value.FirstOrDefault();
+                await SaveUserActivity(data, url,Int32.Parse(user), ipAddress,convertedResult, actDesc);
+            }
             context.HttpContext.Response.Headers.Clear();
            
         }
-        private async Task SaveUserActivity(string data, string url, string user, string ipAddress,string response, string actDesc)
+        private async Task SaveUserActivity(string data, string url, int user, string ipAddress,string response, string actDesc)
         {
             var userActivity = new UserActivity
             {
-                Data = data,
+                RequestData = data,
                 Url = url,
                 UserId = user,
                 IpAddress = ipAddress,

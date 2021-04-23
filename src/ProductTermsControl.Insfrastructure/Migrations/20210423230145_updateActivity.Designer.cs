@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProductTermsControl.Insfrastructure;
 
 namespace ProductTermsControl.Insfrastructure.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20210423230145_updateActivity")]
+    partial class updateActivity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -351,10 +353,10 @@ namespace ProductTermsControl.Insfrastructure.Migrations
                     b.Property<DateTime>("CreateDate")
                         .HasColumnType("datetime");
 
-                    b.Property<string>("IpAddress")
+                    b.Property<string>("Data")
                         .HasColumnType("text");
 
-                    b.Property<string>("RequestData")
+                    b.Property<string>("IpAddress")
                         .HasColumnType("text");
 
                     b.Property<DateTime>("UpdateDate")

@@ -9,7 +9,7 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace ProductTermsControl.Insfrastructure.Helpers
+namespace ProductTermsControl.Insfrastructure
 {
     public class DataContext : DbContext, IApplicationDbContext
     {
