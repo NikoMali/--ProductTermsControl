@@ -244,6 +244,13 @@ namespace WebApi.Controllers
             var result = await _userService.PositionRemove(Id);
             return Ok(new { status = result });
         }
+        [AllowAnonymous]
+        [HttpGet("Activity/{userId}")]
+        public async Task<IActionResult> UserActivity(int userId)
+        {
 
+            var result = await _userService.UserActivityReport(userId);
+            return Ok(result);
+        }
     }
 }

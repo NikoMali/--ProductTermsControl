@@ -11,6 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using AppException = ProductTermsControl.Application.Helpers.AppException;
 using ProductTermsControl.Domain.HelperModel;
+using System.Globalization;
 
 namespace ProductTermsControl.Application.Services
 {
@@ -36,6 +37,7 @@ namespace ProductTermsControl.Application.Services
         Task<string> PositionRemove(int Id);
         Task<Position> PositionGetById(int Id);
         Task<IEnumerable<Position>> Positions();
+        Task<List<UserActivityByDate>> UserActivityReport(int userId);
     }
 
     public class UserService : IUserService
@@ -299,6 +301,16 @@ namespace ProductTermsControl.Application.Services
         public async Task<IEnumerable<Position>> Positions()
         {
             return await _context.Positions.ToListAsync();
+        }
+
+        public async Task<List<UserActivityByDate>> UserActivityReport(int userId)
+        {
+            var result = from UA in _context.UserActivities.AsEnumerable()
+                         where UA.UserId == userId
+                         group UA by UA.CreateDate.Date into gUA
+                         //join U in _context.Users on gUA.FirstOrDefault().UserId equals U.Id.ToString()
+                         select new UserActivityByDate(gUA.ToList());
+            return result.ToList();
         }
     }
 }

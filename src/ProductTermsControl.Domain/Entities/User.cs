@@ -23,6 +23,8 @@ namespace ProductTermsControl.Domain.Entities
 
         public List<UserReference> UserReferences { get; set; }
         public List<ResponsiblePersonsForProduct> ResponsiblePersonsByProducts { get; set; }
+        public List<UserActivity> UserActivities { get; set; }
+
 
         public User() { }
 

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using ProductTermsControl.Insfrastructure;
 using ProductTermsControl.Insfrastructure.Helpers;
 using ProductTermsControl.Insfrastructure.IntarfaceConnReposit;
 using ProductTermsControl.Insfrastructure.StartUpExtensions;
