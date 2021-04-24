@@ -270,7 +270,6 @@ namespace WebApi.Controllers
         [HttpGet("Activity/{userId}")]
         public async Task<IActionResult> UserActivity(int userId)
         {
-
             var result = _mapper.Map<List<UserActivityByDateResponseModel>>(await _userService.UserActivityReport(userId));
             return Ok(result);
         }
