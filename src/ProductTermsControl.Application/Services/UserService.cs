@@ -305,12 +305,12 @@ namespace ProductTermsControl.Application.Services
 
         public async Task<List<UserActivityByDate>> UserActivityReport(int userId)
         {
-            var result = from UA in _context.UserActivities.AsEnumerable()
+            var result = from UA in await _context.UserActivities.ToListAsync()
                          where UA.UserId == userId
                          group UA by UA.CreateDate.Date into gUA
-                         //join U in _context.Users on gUA.FirstOrDefault().UserId equals U.Id.ToString()
+                         //join U in _context.Users on gUA.FirstOrDefault().UserId equals U.Id
                          select new UserActivityByDate(gUA.ToList());
-            return result.ToList();
+            return result.OrderByDescending(x=>x.Date).ToList();
         }
     }
 }

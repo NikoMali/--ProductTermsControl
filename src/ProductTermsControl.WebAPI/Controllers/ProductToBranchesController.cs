@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ProductTermsControl.Application.Services;
 using ProductTermsControl.Domain.Entities;
+using ProductTermsControl.Insfrastructure.Enums;
+using ProductTermsControl.Insfrastructure.Helpers;
 using ProductTermsControl.WebAPI.Models;
 
 namespace ProductTermsControl.WebAPI.Controllers
@@ -28,6 +30,7 @@ namespace ProductTermsControl.WebAPI.Controllers
             _mapper = mapper;
         }
 
+        [DescriptionUserActivity(UserActivityType.Get)]
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
@@ -36,6 +39,7 @@ namespace ProductTermsControl.WebAPI.Controllers
             return Ok(model);
         }
 
+        [DescriptionUserActivity(UserActivityType.Get)]
         [HttpGet("{Id}")]
         public async Task<IActionResult> GetById(int Id)
         {
@@ -43,6 +47,8 @@ namespace ProductTermsControl.WebAPI.Controllers
             var model = _mapper.Map<ProductToBranchResponseModel>(ProductToBranch);
             return Ok(model);
         }
+
+        [DescriptionUserActivity(UserActivityType.Update)]
         [HttpPut]
         public async Task<IActionResult> Update([FromBody] ProductToBranchModel productToBranchModel)
         {
@@ -55,12 +61,15 @@ namespace ProductTermsControl.WebAPI.Controllers
             return Ok(ProductToBranch);
         }
 
+        [DescriptionUserActivity(UserActivityType.Delete)]
         [HttpDelete("{Id}")]
         public async Task<IActionResult> Delete(int Id)
         {
             var ProductToBranchResult =await _ProductToBranchService.Delete(Id);
             return Ok(new { status = ProductToBranchResult });
         }
+
+        [DescriptionUserActivity(UserActivityType.Create)]
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] IList<ProductToBranchModel> productToBranchModel)
         {
@@ -76,6 +85,7 @@ namespace ProductTermsControl.WebAPI.Controllers
             return Ok(new { status = ProductToBranch });
         }
 
+        [DescriptionUserActivity(UserActivityType.Get)]
         [HttpGet("{BranchId}/ProductsWithTerm")]
         public async Task<IActionResult> GetAllProductByBranchId(int BranchId)
         {
@@ -84,7 +94,7 @@ namespace ProductTermsControl.WebAPI.Controllers
             return Ok(model);
         }
 
-
+        [DescriptionUserActivity(UserActivityType.Get)]
         [HttpGet("{BranchId}/ProductsWithTerm/{BranchProductId}")]
         public async Task<IActionResult> GetProductViewTermByBranchId(int BranchId, int BranchProductId)
         {
@@ -92,6 +102,8 @@ namespace ProductTermsControl.WebAPI.Controllers
             var model = _mapper.Map<ProductToBranchModel>(ProductByBranchId);
             return Ok(model);
         }
+
+        [DescriptionUserActivity(UserActivityType.Get)]
         [HttpGet("{BranchId}/ProductsByResponsible/{UserId}")]
         public async Task<IActionResult> ProductsByResponsible(int BranchId, int UserId)
         {
@@ -100,6 +112,7 @@ namespace ProductTermsControl.WebAPI.Controllers
             return Ok(model);
         }
 
+        [DescriptionUserActivity(UserActivityType.Get)]
         [HttpGet("OutOfStocks")]
         public async Task<IActionResult> OutOfStocks()
         {
@@ -107,6 +120,8 @@ namespace ProductTermsControl.WebAPI.Controllers
             var model = _mapper.Map<IList<BranchProductStockResponseModel>>(outOfStocks);
             return Ok(model);
         }
+
+        [DescriptionUserActivity(UserActivityType.Get)]
         [HttpGet("OutOfStocks/{stockId}")]
         public async Task<IActionResult> OutOfStock(int stockId)
         {
@@ -114,6 +129,8 @@ namespace ProductTermsControl.WebAPI.Controllers
             var model = _mapper.Map<BranchProductStockResponseModel>(outOfStock);
             return Ok(model);
         }
+
+        [DescriptionUserActivity(UserActivityType.Create)]
         [HttpPost("OutOfStockCreate")]
         public async Task<IActionResult> OutOfStockCreate(BranchProductStockModel branchProductStockModel)
         {
@@ -122,6 +139,8 @@ namespace ProductTermsControl.WebAPI.Controllers
             var model = _mapper.Map<BranchProductStockResponseModel>(outOfStock);
             return Ok(model);
         }
+
+        [DescriptionUserActivity(UserActivityType.Update)]
         [HttpPut("OutOfStockUpdate")]
         public async Task<IActionResult> OutOfStockUpdate(BranchProductStockModel branchProductStockModel)
         {
@@ -130,6 +149,8 @@ namespace ProductTermsControl.WebAPI.Controllers
             var model = _mapper.Map<BranchProductStockResponseModel>(outOfStock);
             return Ok(model);
         }
+
+        [DescriptionUserActivity(UserActivityType.Delete)]
         [HttpDelete("OutOfStockRemove/{stockId}")]
         public async Task<IActionResult> OutOfStockRemove(int stockId)
         {

@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ProductTermsControl.Application.Services;
 using ProductTermsControl.Domain.Entities;
+using ProductTermsControl.Insfrastructure.Enums;
+using ProductTermsControl.Insfrastructure.Helpers;
 using ProductTermsControl.WebAPI.Models;
 
 namespace ProductTermsControl.WebAPI.Controllers
@@ -28,6 +30,7 @@ namespace ProductTermsControl.WebAPI.Controllers
             _mapper = mapper;
         }
 
+        [DescriptionUserActivity(UserActivityType.Get)]
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
@@ -36,6 +39,7 @@ namespace ProductTermsControl.WebAPI.Controllers
             return Ok( model);
         }
 
+        [DescriptionUserActivity(UserActivityType.Get)]
         [HttpGet("{Id}")]
         public async Task<IActionResult> GetById(int Id)
         {
@@ -43,6 +47,8 @@ namespace ProductTermsControl.WebAPI.Controllers
             var model = _mapper.Map<ResponsiblePersonsGroupModel>(ResponsiblePersonsGroups);
             return Ok(model);
         }
+
+        [DescriptionUserActivity(UserActivityType.Update)]
         [HttpPut]
         public async Task<IActionResult> Update([FromBody] ResponsiblePersonsGroupModel ResponsiblePersonsGroupsModel)
         {
@@ -51,12 +57,15 @@ namespace ProductTermsControl.WebAPI.Controllers
             return Ok(responsiblePersonsGroups);
         }
 
+        [DescriptionUserActivity(UserActivityType.Delete)]
         [HttpDelete("{Id}")]
         public async Task<IActionResult> Delete(int Id)
         {
             var ResponsiblePersonsGroupsResult = await _ResponsiblePersonsGroupsService.Delete(Id);
             return Ok(new { status = ResponsiblePersonsGroupsResult });
         }
+
+        [DescriptionUserActivity(UserActivityType.Create)]
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] ResponsiblePersonsGroupModel ResponsiblePersonsGroupsModel)
         {
@@ -68,6 +77,7 @@ namespace ProductTermsControl.WebAPI.Controllers
             return Ok(responsModel);
         }
 
+        [DescriptionUserActivity(UserActivityType.Get)]
         [HttpGet("CurrentUseOfSection")]
         public async Task<IActionResult> CurrentUseOfSection()
         {

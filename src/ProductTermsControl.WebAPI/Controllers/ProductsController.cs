@@ -11,6 +11,8 @@ using ProductTermsControl.Application.Paging.Helpers;
 using ProductTermsControl.Application.Paging.Services;
 using ProductTermsControl.Application.Services;
 using ProductTermsControl.Domain.Entities;
+using ProductTermsControl.Insfrastructure.Enums;
+using ProductTermsControl.Insfrastructure.Helpers;
 using ProductTermsControl.WebAPI.Models;
 
 namespace ProductTermsControl.WebAPI.Controllers
@@ -35,6 +37,7 @@ namespace ProductTermsControl.WebAPI.Controllers
             _uriService = uriService;
         }
 
+        [DescriptionUserActivity(UserActivityType.Get)]
         [HttpGet]
         public async Task<IActionResult> GetAll([FromQuery] PaginationFilter filter)
         {
@@ -46,6 +49,7 @@ namespace ProductTermsControl.WebAPI.Controllers
             return Ok(pagedReponse);
         }
 
+        [DescriptionUserActivity(UserActivityType.Get)]
         [HttpGet("{Id}")]
         public async Task<IActionResult> GetById(int Id)
         {
@@ -53,6 +57,8 @@ namespace ProductTermsControl.WebAPI.Controllers
             var model = _mapper.Map<ProductResponseModel>(Product);
             return Ok(model);
         }
+
+        [DescriptionUserActivity(UserActivityType.Update)]
         [HttpPut]
         public async Task<IActionResult> Update([FromBody] ProductModel ProductModel)
         {
@@ -62,12 +68,15 @@ namespace ProductTermsControl.WebAPI.Controllers
             return Ok(modelResponse);
         }
 
+        [DescriptionUserActivity(UserActivityType.Delete)]
         [HttpDelete("{Id}")]
         public async Task<IActionResult> Delete(int Id)
         {
             var ProductResult =await _ProductService.Delete(Id);
             return Ok(new { status = ProductResult });
         }
+
+        [DescriptionUserActivity(UserActivityType.Create)]
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] ProductModel ProductModel)
         {

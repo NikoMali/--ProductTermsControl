@@ -11,6 +11,8 @@ using ProductTermsControl.Application.Paging.Helpers;
 using ProductTermsControl.Application.Paging.Services;
 using ProductTermsControl.Application.Services;
 using ProductTermsControl.Domain.Entities;
+using ProductTermsControl.Insfrastructure.Enums;
+using ProductTermsControl.Insfrastructure.Helpers;
 using ProductTermsControl.WebAPI.Models.Magaziness;
 
 namespace ProductTermsControl.WebAPI.Controllers
@@ -35,8 +37,8 @@ namespace ProductTermsControl.WebAPI.Controllers
             _mapper = mapper;
             _uriService = uriService;
         }
-        
 
+        [DescriptionUserActivity(UserActivityType.Get)]
         [HttpGet]
         public async Task<IActionResult> GetAll([FromQuery] PaginationFilter filter)
         {
@@ -48,6 +50,7 @@ namespace ProductTermsControl.WebAPI.Controllers
             return Ok(pagedReponse);
         }
 
+        [DescriptionUserActivity(UserActivityType.Get)]
         [HttpGet("{Id}")]
         public async Task<IActionResult> GetById(int Id)
         {
@@ -55,6 +58,8 @@ namespace ProductTermsControl.WebAPI.Controllers
             var model = _mapper.Map<MagazineModel>(magazine);
             return Ok(model);
         }
+
+        [DescriptionUserActivity(UserActivityType.Update)]
         [HttpPut]
         public async Task<IActionResult> Update([FromBody] MagazineModel magazineModel)
         {
@@ -63,12 +68,15 @@ namespace ProductTermsControl.WebAPI.Controllers
             return Ok(magazine);
         }
 
+        [DescriptionUserActivity(UserActivityType.Delete)]
         [HttpDelete("{Id}")]
         public async Task<IActionResult> Delete(int Id)
         {
             var magazineResult =await _magazineService.Delete(Id);
             return Ok(new {status = magazineResult});
         }
+
+        [DescriptionUserActivity(UserActivityType.Create)]
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] MagazineModel magazineModel)
         {

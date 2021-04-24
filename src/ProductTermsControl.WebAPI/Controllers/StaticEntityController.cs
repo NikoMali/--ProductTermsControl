@@ -14,6 +14,8 @@ using ProductTermsControl.Application.Paging.Services;
 using ProductTermsControl.Application.Wrappers;
 using ProductTermsControl.WebAPI.Models;
 using ProductTermsControl.Domain.Interfaces;
+using ProductTermsControl.Insfrastructure.Helpers;
+using ProductTermsControl.Insfrastructure.Enums;
 
 namespace ProductTermsControl.WebAPI.Controllers
 {
@@ -35,7 +37,8 @@ namespace ProductTermsControl.WebAPI.Controllers
             _mapper = mapper;
             
         }
-        
+
+        [DescriptionUserActivity(UserActivityType.Get)]
         [HttpGet("ReasonForOutOfStocks")]
         public async Task<IActionResult> GetAll()
         {
@@ -44,7 +47,8 @@ namespace ProductTermsControl.WebAPI.Controllers
             return Ok(_mapper.Map<IList<ReasonForOutOfStockModel>>(await _reasonForOutOfStock.GetAll()));
 
         }
-        
+
+        [DescriptionUserActivity(UserActivityType.Get)]
         [HttpGet("ReasonForOutOfStocks/{Id}")]
         public async Task<IActionResult> GetById(int Id)
         {
@@ -52,7 +56,8 @@ namespace ProductTermsControl.WebAPI.Controllers
             
             return Ok(_mapper.Map<ReasonForOutOfStockModel>(model));
         }
-        
+
+        [DescriptionUserActivity(UserActivityType.Update)]
         [HttpPut("ReasonForOutOfStockUpdate")]
         public async Task<IActionResult> Update([FromBody] ReasonForOutOfStockModel reasonForOutOfStockModel)
         {
@@ -61,14 +66,16 @@ namespace ProductTermsControl.WebAPI.Controllers
             
             return Ok(_mapper.Map<ReasonForOutOfStockModel>(ReasonForOutOfStock));
         }
-        
+
+        [DescriptionUserActivity(UserActivityType.Delete)]
         [HttpDelete("ReasonForOutOfStock/{Id}")]
         public async Task<IActionResult> Delete(int Id)
         {
             var reason =await _reasonForOutOfStock.Delete(Id);
             return Ok(_mapper.Map<ReasonForOutOfStockModel>(reason));
         }
-        
+
+        [DescriptionUserActivity(UserActivityType.Create)]
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] ReasonForOutOfStockModel reasonForOutOfStockModel)
         {

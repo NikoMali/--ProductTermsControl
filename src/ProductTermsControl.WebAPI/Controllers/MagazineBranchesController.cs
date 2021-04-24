@@ -13,6 +13,8 @@ using ProductTermsControl.Application.Paging.Helpers;
 using ProductTermsControl.Application.Paging.Services;
 using ProductTermsControl.WebAPI.Models;
 using ProductTermsControl.WebAPI.Models.Users;
+using ProductTermsControl.Insfrastructure.Helpers;
+using ProductTermsControl.Insfrastructure.Enums;
 
 namespace ProductTermsControl.WebAPI.Controllers
 {
@@ -44,7 +46,7 @@ namespace ProductTermsControl.WebAPI.Controllers
             _uriService = uriService;
             _userService = userService;
         }
-
+        [DescriptionUserActivity(UserActivityType.Get)]
         [HttpGet]
         public async Task<IActionResult> GetAll([FromQuery] PaginationFilter filter)
         {
@@ -62,6 +64,7 @@ namespace ProductTermsControl.WebAPI.Controllers
             return Ok(pagedReponse);
         }
 
+        [DescriptionUserActivity(UserActivityType.Get)]
         [HttpGet("{Id}")]
         public async Task<IActionResult> GetById(int Id)
         {
@@ -70,6 +73,8 @@ namespace ProductTermsControl.WebAPI.Controllers
             model.NumberOfEmployeeUpdate(model, _MagazineBranchService);
             return Ok(model);
         }
+
+        [DescriptionUserActivity(UserActivityType.Get)]
         [HttpGet("{BranchId}/users")]
         public async Task<IActionResult> GetUsersByBranchId(int BranchId)
         {
@@ -79,6 +84,8 @@ namespace ProductTermsControl.WebAPI.Controllers
             var model = _mapper.Map<IList<UserReferenceResponseModel>>(users);
             return Ok(model);
         }
+
+        [DescriptionUserActivity(UserActivityType.Update)]
         [HttpPut]
         public async Task<IActionResult> Update([FromBody] MagazineBranchModel MagazineBranchModel)
         {
@@ -87,12 +94,15 @@ namespace ProductTermsControl.WebAPI.Controllers
             return Ok(_mapper.Map<MagazineBranchModel>(MagazineBranch));
         }
 
+        [DescriptionUserActivity(UserActivityType.Delete)]
         [HttpDelete("{Id}")]
         public async Task<IActionResult> Delete(int Id)
         {
             var MagazineBranchResult =await _MagazineBranchService.Delete(Id);
             return Ok(new { status = MagazineBranchResult });
         }
+
+        [DescriptionUserActivity(UserActivityType.Create)]
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] MagazineBranchModel MagazineBranchModel)
         {
