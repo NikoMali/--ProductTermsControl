@@ -13,6 +13,8 @@ using ProductTermsControl.Application.Paging.Helpers;
 using ProductTermsControl.Application.Paging.Services;
 using ProductTermsControl.Application.Wrappers;
 using ProductTermsControl.WebAPI.Models;
+using ProductTermsControl.Insfrastructure.Helpers;
+using ProductTermsControl.Insfrastructure.Enums;
 
 namespace ProductTermsControl.WebAPI.Controllers
 {
@@ -37,6 +39,7 @@ namespace ProductTermsControl.WebAPI.Controllers
         /// <summary>
         /// Company Full List
         /// </summary>
+        [DescriptionUserActivity(UserActivityType.Get)]
         [HttpGet]
         public async Task<IActionResult> GetAll([FromQuery] PaginationFilter filter)
         {
@@ -52,6 +55,7 @@ namespace ProductTermsControl.WebAPI.Controllers
         /// <summary>
         /// Get Company By Id
         /// </summary>
+        [DescriptionUserActivity(UserActivityType.Get)]
         [HttpGet("{Id}")]
         public async Task<IActionResult> GetById(int Id)
         {
@@ -62,6 +66,7 @@ namespace ProductTermsControl.WebAPI.Controllers
         /// <summary>
         /// Company update By Body
         /// </summary>
+        [DescriptionUserActivity(UserActivityType.Update)]
         [HttpPut]
         public async Task<IActionResult> Update([FromBody] CompanyModel CompanyModel)
         {
@@ -72,6 +77,7 @@ namespace ProductTermsControl.WebAPI.Controllers
         /// <summary>
         /// Delete Company By Id
         /// </summary>
+        [DescriptionUserActivity(UserActivityType.Delete)]
         [HttpDelete("{Id}")]
         public async Task<IActionResult> Delete(int Id)
         {
@@ -81,6 +87,7 @@ namespace ProductTermsControl.WebAPI.Controllers
         /// <summary>
         /// Company Create
         /// </summary>
+        [DescriptionUserActivity(UserActivityType.Create)]
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CompanyModel CompanyModel)
         {

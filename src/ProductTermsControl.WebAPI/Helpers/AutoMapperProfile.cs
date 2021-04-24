@@ -87,6 +87,12 @@ namespace ProductTermsControl.WebAPI.Helpers
             CreateMap<SectionWithUsersAndProducts, SectionWithUsersAndProductsModel>();
             CreateMap<SectionWithUsersAndProductsModel, SectionWithUsersAndProducts>();
 
+            CreateMap<UserActivityByDate, UserActivityByDateResponseModel>();
+            CreateMap<UserActivityByDateResponseModel, UserActivityByDate>();
+
+            CreateMap<UserActivity, UserActivityModel>();
+            CreateMap<UserActivityModel, UserActivity>();
+
         }
     }
 }

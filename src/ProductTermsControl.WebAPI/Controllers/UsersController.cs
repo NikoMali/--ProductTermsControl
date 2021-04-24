@@ -48,6 +48,8 @@ namespace WebApi.Controllers
             _uriService = uriService;
             _magazineBranchService = magazineBranchService;
         }
+
+
         [DescriptionUserActivity(UserActivityType.Get)]
         [AllowAnonymous]
         [HttpPost("authenticate")]
@@ -82,6 +84,8 @@ namespace WebApi.Controllers
                 Token = tokenString
             });
         }
+
+
         [DescriptionUserActivity(UserActivityType.Create)]
         [AllowAnonymous]
         [HttpPost("register")]
@@ -152,6 +156,8 @@ namespace WebApi.Controllers
                 return BadRequest(new { message = ex.Message });
             }
         }
+
+
         [DescriptionUserActivity(UserActivityType.Delete)]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
@@ -159,6 +165,8 @@ namespace WebApi.Controllers
             var deleteStatus = await _userService.Delete(id);
             return Ok(new { status = deleteStatus });
         }
+
+        [DescriptionUserActivity(UserActivityType.Create)]
         [AllowAnonymous]
         [HttpPost("UserReferenceCreate")]
         public async Task<IActionResult> UserReferenceCreate([FromBody] UserReferenceModel model)
@@ -167,6 +175,8 @@ namespace WebApi.Controllers
             var result = _mapper.Map <UserReferenceModel>(await _userService.UserReferenceCreate(user));
             return Ok(result);
         }
+
+        [DescriptionUserActivity(UserActivityType.Update)]
         [AllowAnonymous]
         [HttpPut("UserReferenceUpdate")]
         public async Task<IActionResult> UserReferenceUpdate([FromBody] UserReferenceModel model)
@@ -175,6 +185,8 @@ namespace WebApi.Controllers
             var result = _mapper.Map<UserReferenceModel>(await _userService.UserReferenceUpdate(user));
             return Ok(result);
         }
+
+        [DescriptionUserActivity(UserActivityType.Get)]
         [AllowAnonymous]
         [HttpGet("UserReference/{userId}")]
         public async Task<IActionResult> UserReferenceGetById(int userId)
@@ -183,6 +195,8 @@ namespace WebApi.Controllers
             var user = _mapper.Map<UserReferenceModel>(result);
             return Ok(user);
         }
+
+        [DescriptionUserActivity(UserActivityType.Get)]
         [AllowAnonymous]
         [HttpGet("UserReferences")]
         public async Task<IActionResult> UserReferences()
@@ -192,6 +206,7 @@ namespace WebApi.Controllers
             return Ok(user);
         }
 
+        [DescriptionUserActivity(UserActivityType.Delete)]
         [AllowAnonymous]
         [HttpDelete("UserReferenceRemove/{userId}")]
         public async Task<IActionResult> UserReferenceRemove(int userId)
@@ -202,7 +217,7 @@ namespace WebApi.Controllers
         }
         ////////////////////////////////////////////////////////
         ///
-
+        [DescriptionUserActivity(UserActivityType.Create)]
         [AllowAnonymous]
         [HttpPost("PositionCreate")]
         public async Task<IActionResult> PositionCreate([FromBody] PositionModel model)
@@ -211,6 +226,8 @@ namespace WebApi.Controllers
             var result = _mapper.Map<PositionModel>(await _userService.PositionCreate(position));
             return Ok(result);
         }
+
+        [DescriptionUserActivity(UserActivityType.Update)]
         [AllowAnonymous]
         [HttpPut("PositionUpdate")]
         public async Task<IActionResult> PositionUpdate([FromBody] PositionModel model)
@@ -219,6 +236,8 @@ namespace WebApi.Controllers
             var result = _mapper.Map<PositionModel>(await _userService.PositionUpdate(position));
             return Ok(result);
         }
+
+        [DescriptionUserActivity(UserActivityType.Get)]
         [AllowAnonymous]
         [HttpGet("PositionGet/{Id}")]
         public async Task<IActionResult> PositionGet(int Id)
@@ -227,6 +246,8 @@ namespace WebApi.Controllers
             var position = _mapper.Map<PositionModel>(result);
             return Ok(position);
         }
+
+        [DescriptionUserActivity(UserActivityType.Get)]
         [AllowAnonymous]
         [HttpGet("Positions")]
         public async Task<IActionResult> Positions()
@@ -236,6 +257,7 @@ namespace WebApi.Controllers
             return Ok(position);
         }
 
+        [DescriptionUserActivity(UserActivityType.Delete)]
         [AllowAnonymous]
         [HttpDelete("PositionRemove/{Id}")]
         public async Task<IActionResult> PositionRemove(int Id)
@@ -249,7 +271,7 @@ namespace WebApi.Controllers
         public async Task<IActionResult> UserActivity(int userId)
         {
 
-            var result = await _userService.UserActivityReport(userId);
+            var result = _mapper.Map<List<UserActivityByDateResponseModel>>(await _userService.UserActivityReport(userId));
             return Ok(result);
         }
     }
