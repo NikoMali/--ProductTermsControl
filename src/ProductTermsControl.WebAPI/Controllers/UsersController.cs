@@ -23,7 +23,7 @@ using ProductTermsControl.Insfrastructure.Enums;
 
 namespace WebApi.Controllers
 {
-    [Authorize]
+    [Authorize(Policy = "AtLeast3Years")]
     [ApiController]
     [Route("[controller]")]
     public class UsersController : ControllerBase

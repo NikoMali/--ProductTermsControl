@@ -7,6 +7,8 @@ using ProductTermsControl.Insfrastructure.Repository;
 using ProductTermsControl.Application.ApplicationDbContext;
 using ProductTermsControl.Insfrastructure.Helpers;
 using ProductTermsControl.Application.Services;
+using Microsoft.AspNetCore.Authorization;
+using ProductTermsControl.Application.Authorization;
 
 namespace ProductTermsControl.Insfrastructure.IntarfaceConnReposit
 {
@@ -24,6 +26,8 @@ namespace ProductTermsControl.Insfrastructure.IntarfaceConnReposit
             services.AddScoped<IResponsiblePersonsGroupService, ResponsiblePersonsGroupService>();
             services.AddScoped<IResponsiblePersonsForProductService, ResponsiblePersonsForProductService>();
             services.AddScoped<IProductToBranchService, ProductToBranchService>();
+            services.AddScoped<IRoleService, RoleService>();
+            services.AddScoped<IAuthorizationHandler, RoleHandler>();
 
             //for paging
             services.AddHttpContextAccessor();
