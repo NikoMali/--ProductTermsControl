@@ -87,9 +87,9 @@ namespace ProductTermsControl.WebAPI.Controllers
 
         [DescriptionUserActivity(UserActivityType.Get)]
         [HttpGet("{BranchId}/ProductsWithTerm")]
-        public async Task<IActionResult> GetAllProductByBranchId(int BranchId)
+        public async Task<IActionResult> GetAllProductByBranchId(int BranchId,[FromQuery]int UserId)
         {
-            var ProductByBranchId =await _ProductToBranchService.GetAllProductByBranchId(BranchId);
+            var ProductByBranchId =await _ProductToBranchService.GetAllProductWithFiltres(BranchId, UserId);
             var model = _mapper.Map<IList<ProductWithTermModel>>(ProductByBranchId);
             return Ok(model);
         }
