@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using ProductTermsControl.Application.Authorization;
 using ProductTermsControl.Application.Services;
 using ProductTermsControl.Domain.Entities;
 using ProductTermsControl.Domain.Interfaces;
@@ -16,7 +18,16 @@ namespace ProductTermsControl.Insfrastructure.StartUpExtensions
     {
         public static IServiceCollection AddAuthService(this IServiceCollection services, IWebHostEnvironment env, byte[] key) 
         {
+
+            //services.AddIdentity<IdentityUser, IdentityRole>();
             // configure jwt authentication
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("RoleWithPermissions",
+                  policy => policy
+                    .Requirements
+                    .Add(new RoleRequirement()));
+            });
             services.AddAuthentication(x =>
             {
                 x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
