@@ -306,7 +306,7 @@ namespace ProductTermsControl.Application.Services
         public async Task<List<UserActivityByDate>> UserActivityReport(int userId)
         {
             var result = from UA in await _context.UserActivities.ToListAsync()
-                         where UA.UserId == userId
+                         where UA.UserId == userId && UA.ActivityType != "GET"
                          group UA by UA.CreateDate.Date into gUA
                          //join U in _context.Users on gUA.FirstOrDefault().UserId equals U.Id
                          select new UserActivityByDate(gUA.ToList());

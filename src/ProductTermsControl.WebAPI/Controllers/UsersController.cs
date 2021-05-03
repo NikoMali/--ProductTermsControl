@@ -20,10 +20,11 @@ using ProductTermsControl.Application.Paging.Services;
 using ProductTermsControl.WebAPI.Models;
 using Serilog;
 using ProductTermsControl.Insfrastructure.Enums;
+using Microsoft.AspNetCore.Identity;
 
 namespace WebApi.Controllers
 {
-    [Authorize]
+    [Authorize(Policy = "RoleWithPermissions")]
     [ApiController]
     [Route("[controller]")]
     public class UsersController : ControllerBase
@@ -33,13 +34,17 @@ namespace WebApi.Controllers
         private IMapper _mapper;
         private readonly AppSettings _appSettings;
         private readonly IUriService _uriService;
+        private readonly IRoleService _roleService;
+        private readonly UserManager<IdentityUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
         public UsersController(
             IUserService userService,
             IMapper mapper,
             IOptions<AppSettings> appSettings,
             IUriService uriService,
-            IMagazineBranchService magazineBranchService
+            IMagazineBranchService magazineBranchService,
+            IRoleService roleService
             )
         {
             _userService = userService;
@@ -47,6 +52,8 @@ namespace WebApi.Controllers
             _appSettings = appSettings.Value;
             _uriService = uriService;
             _magazineBranchService = magazineBranchService;
+            _roleService = roleService;
+           
         }
 
 
@@ -62,12 +69,20 @@ namespace WebApi.Controllers
 
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
+            var userRoles = await _roleService.GetRolesAsync(user.Id);
+            var test = _roleService.GetAllActionMethodAsync();
+            var authClaims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.Name, user.Id.ToString()),
+                };
+            foreach (var userRole in userRoles)
+            {
+                authClaims.Add(new Claim(ClaimTypes.Role, userRole));
+            }
+            var appIdentity = new ClaimsIdentity(authClaims);
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Subject = new ClaimsIdentity(new Claim[]
-                {
-                    new Claim(ClaimTypes.Name, user.Id.ToString())
-                }),
+                Subject = appIdentity,
                 Expires = DateTime.UtcNow.AddDays(7),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
