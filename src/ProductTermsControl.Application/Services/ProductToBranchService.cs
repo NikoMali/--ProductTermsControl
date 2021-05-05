@@ -202,7 +202,11 @@ namespace ProductTermsControl.Application.Services
         }
         public async Task<BranchProductStock> OutOfStockCreate(BranchProductStock productToBranch)
         {
-            
+            var getProductToBranch =await _context.ProductToBranches.FindAsync(productToBranch.ProductToBranchId);
+            if (getProductToBranch.Quantity < productToBranch.Quantity)
+            {
+                throw new AppException("You are asking for more product quantity removal than there is");
+            }
             await _context.BranchProductStocks.AddAsync(productToBranch);
             await _context.SaveChangesAsync();
             productToBranch.ProductToBranch =await GetById(productToBranch.ProductToBranchId);

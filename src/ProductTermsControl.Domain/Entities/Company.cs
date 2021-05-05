@@ -9,6 +9,18 @@ namespace ProductTermsControl.Domain.Entities
        
         public string IdentificationCode { get; set; }
         public string Name { get; set; }
-       
+
+        public List<Product> Products { get; set; }
+
+        public Company() { }
+
+        public Company(Company company, List<Product> products)
+        {
+            IdentificationCode = company.IdentificationCode;
+            Name = company.Name;
+            Products = products;
+        }
+
+
     }
 }

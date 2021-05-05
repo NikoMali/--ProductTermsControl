@@ -21,6 +21,7 @@ using ProductTermsControl.WebAPI.Models;
 using Serilog;
 using ProductTermsControl.Insfrastructure.Enums;
 using Microsoft.AspNetCore.Identity;
+using ProductTermsControl.Application.Helpers;
 
 namespace WebApi.Controllers
 {
