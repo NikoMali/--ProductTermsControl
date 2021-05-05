@@ -84,11 +84,20 @@ namespace ProductTermsControl.Application.Services
             {
                 validFilter.PageSize = await totalRecords;
             }
-            var pagedData =await _context.Companys
+            var pagedData = 
+                (from C in await _context.Companys.ToListAsync()
+                 join P in _context.Products on C.Id equals P.CompanyId
+                 select new
+                 {
+                     C,
+                     P
+                 } into CP
+                 group CP by CP.P.CompanyId into gP
+                 select new Company(gP.FirstOrDefault().C,gP.Select(x=>x.P).ToList()))
                 .OrderBy(x=>x.Id)
                 .Skip((validFilter.PageNumber - 1) * validFilter.PageSize)
                 .Take(validFilter.PageSize)
-                .ToListAsync();
+                .ToList();
 
             
             var result = new GetAllWithPaging<Company>(validFilter, pagedData,await totalRecords);

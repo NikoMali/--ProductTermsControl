@@ -76,6 +76,10 @@ namespace ProductTermsControl.Application.Services
 
         public async Task<Product> Create(Product product)
         {
+            if (await _context.Products.AnyAsync(x=>x.IdentificationCode == product.IdentificationCode))
+            {
+                throw new AppException("Identification code is already Exist");
+            }
             await _context.Products.AddAsync(product);
             await _context.SaveChangesAsync();
             product.Company = await _context.Companys.FindAsync(product.CompanyId);

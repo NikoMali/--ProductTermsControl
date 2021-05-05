@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using ProductTermsControl.Insfrastructure;
 using ProductTermsControl.Insfrastructure.Helpers;
 using ProductTermsControl.Insfrastructure.IntarfaceConnReposit;
@@ -79,6 +80,7 @@ namespace ProductTermsControl.WebAPI
             {
             
            
+            app.UseMiddleware<ErrorHandlerMiddleware>();
 
             // global cors policy
             app.UseCors(builder => builder
@@ -88,8 +90,11 @@ namespace ProductTermsControl.WebAPI
                         .AllowCredentials()
                         );
                 dataContext.Database.Migrate();
+            if (env.IsDevelopment())
+            {
                 app.UseDeveloperExceptionPage();
-                app.UseStaticFiles();
+            }
+            app.UseStaticFiles();
                 app.UseRouting();
 
                 app.UseAuthentication();
@@ -103,6 +108,7 @@ namespace ProductTermsControl.WebAPI
                 //swagger
 
                 app.UseCustomizedSwagger(_env);
+
         }
         private static void RegisterServices(IServiceCollection services)
         {
