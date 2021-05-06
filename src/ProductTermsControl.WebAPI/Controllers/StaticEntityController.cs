@@ -16,6 +16,7 @@ using ProductTermsControl.WebAPI.Models;
 using ProductTermsControl.Domain.Interfaces;
 using ProductTermsControl.Insfrastructure.Helpers;
 using ProductTermsControl.Insfrastructure.Enums;
+using Microsoft.AspNetCore.Localization;
 
 namespace ProductTermsControl.WebAPI.Controllers
 {
@@ -82,6 +83,18 @@ namespace ProductTermsControl.WebAPI.Controllers
             var model = _mapper.Map<ReasonForOutOfStock>(reasonForOutOfStockModel);
             var ReasonForOutOfStock = await _reasonForOutOfStock.Add(model);
             return Ok(_mapper.Map<ReasonForOutOfStockModel>(ReasonForOutOfStock));
+        }
+
+        [HttpPost("SetLanguage")]
+        public IActionResult SetLanguage([FromQuery]string culture)
+        {
+                HttpContext.Response.Cookies.Delete("Set-Cookie");
+            
+
+            HttpContext.Response.Cookies.Append(".AspNetCore.Culture",
+                $"c={culture}|uic={culture}", new CookieOptions { Expires = DateTime.UtcNow.AddYears(1) });
+
+            return Ok(new { message = Response.Cookies });
         }
     }
 }

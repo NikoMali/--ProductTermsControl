@@ -1,7 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Localization;
 using ProductTermsControl.Application.ApplicationDbContext;
 using ProductTermsControl.Application.Filter;
 using ProductTermsControl.Application.Helpers;
+using ProductTermsControl.Application.Localize;
 using ProductTermsControl.Domain.Entities;
 using ProductTermsControl.Domain.Interfaces;
 using System;
@@ -25,10 +27,12 @@ namespace ProductTermsControl.Application.Services
     public class ProductService : IProductService
     {
         private readonly IApplicationDbContext _context;
+        private readonly IStringLocalizer<Resource> _localizer;
 
-        public ProductService(IApplicationDbContext context)
+        public ProductService(IApplicationDbContext context, IStringLocalizer<Resource> localizer)
         {
             _context = context;
+            _localizer = localizer;
         }
         public async Task<IEnumerable<Product>> GetAll()
         {
@@ -78,7 +82,7 @@ namespace ProductTermsControl.Application.Services
         {
             if (await _context.Products.AnyAsync(x=>x.IdentificationCode == product.IdentificationCode))
             {
-                throw new AppException("Identification code is already Exist");
+                throw new AppException(_localizer["ProductIdentificationValid"]);
             }
             await _context.Products.AddAsync(product);
             await _context.SaveChangesAsync();

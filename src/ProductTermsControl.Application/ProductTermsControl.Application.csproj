@@ -14,5 +14,13 @@
   <ItemGroup>
     <ProjectReference Include="..\ProductTermsControl.Domain\ProductTermsControl.Domain.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Update="Localize\Resource.en-US.resx">
+      <Generator></Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Localize\Resource.ka-GE.resx">
+      <Generator></Generator>
+    </EmbeddedResource>
+  </ItemGroup>
 
 </Project>
