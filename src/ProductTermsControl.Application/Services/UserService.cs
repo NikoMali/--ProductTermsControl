@@ -12,6 +12,8 @@ using System.Threading.Tasks;
 using AppException = ProductTermsControl.Application.Helpers.AppException;
 using ProductTermsControl.Domain.HelperModel;
 using System.Globalization;
+using ProductTermsControl.Application.Localize;
+using Microsoft.Extensions.Localization;
 
 namespace ProductTermsControl.Application.Services
 {
@@ -43,11 +45,12 @@ namespace ProductTermsControl.Application.Services
     public class UserService : IUserService
     {
         private readonly IApplicationDbContext _context;
-       
+        private readonly IStringLocalizer<Resource> _localizer;
 
-        public UserService(IApplicationDbContext context)
+        public UserService(IApplicationDbContext context, IStringLocalizer<Resource> localizer)
         {
             _context = context;
+            _localizer = localizer;
         }
 
         public async Task<User> Authenticate(string username, string password)
@@ -81,9 +84,10 @@ namespace ProductTermsControl.Application.Services
 
         public async Task<User> Create(User user, string password)
         {
+            var k = _localizer["String1"];
             // validation
             if (string.IsNullOrWhiteSpace(password))
-                throw new AppException("Password is required");
+                throw new AppException(_localizer["String1"]);
             
 
 

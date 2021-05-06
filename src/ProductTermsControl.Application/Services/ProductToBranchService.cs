@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Localization;
 using ProductTermsControl.Application.ApplicationDbContext;
 using ProductTermsControl.Application.Helpers;
+using ProductTermsControl.Application.Localize;
 using ProductTermsControl.Domain.Entities;
 using ProductTermsControl.Domain.HelperModel;
 using ProductTermsControl.Domain.Interfaces;
@@ -32,10 +34,12 @@ namespace ProductTermsControl.Application.Services
     public class ProductToBranchService : IProductToBranchService
     {
         private readonly IApplicationDbContext _context;
+        private readonly IStringLocalizer<Resource> _localizer;
 
-        public ProductToBranchService(IApplicationDbContext context)
+        public ProductToBranchService(IApplicationDbContext context, IStringLocalizer<Resource> localizer)
         {
             _context = context;
+            _localizer = localizer;
         }
         public async Task<IEnumerable<ProductToBranch>> GetAll()
         {
@@ -205,7 +209,7 @@ namespace ProductTermsControl.Application.Services
             var getProductToBranch =await _context.ProductToBranches.FindAsync(productToBranch.ProductToBranchId);
             if (getProductToBranch.Quantity < productToBranch.Quantity)
             {
-                throw new AppException("You are asking for more product quantity removal than there is");
+                throw new AppException(_localizer["ProductStockOutQuantityValid"]);
             }
             await _context.BranchProductStocks.AddAsync(productToBranch);
             await _context.SaveChangesAsync();
